@@ -1,0 +1,81 @@
+.interfaceContainer {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+}
+
+.mainControls {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+  animation: fadeout 2s linear forwards;
+	-webkit-animation: fadeout 2s linear forwards;
+	pointer-events: none;
+}
+
+@keyframes fadeout {
+  0%,60% {opacity: 1; }
+  100% {opacity: 0; }
+}
+
+.mainControls > * {
+	display: block;
+	border: solid #dddddd;
+	border-width: 2px;
+	border-color: #dddddd;
+	float: left;
+	font-size: 30px;
+	color: #dddddd;
+	text-shadow: 0 0 4px #000000;
+	background-color: Transparent;
+	pointer-events: all;
+}
+
+.nextSlide {
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 30%;
+	height: 100%;
+	box-sizing: border-box;
+}
+
+.previousSlide {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 30%;
+	height: 100%;
+	box-sizing: border-box;
+}
+
+.exitSlideshow {
+	position: absolute;
+	top: 0;
+	left: 30%;
+	width: 40%;
+	height: 50%;
+	box-sizing: border-box;
+}
+
+.viewSource {
+	position: absolute;
+	bottom: 0;
+	left: 30%;
+	width: 40%;
+	height: 50%;
+	line-height: 47vh;
+	text-align: center;
+	box-sizing: border-box;
+}
+
+.viewSource:active, .viewSource:focus {
+  outline: 0;
+  border: none;
+  outline-style: none;
+  -moz-outline-style: none;
+}
