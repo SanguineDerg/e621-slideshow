@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useAppDispatch } from "../../app/hooks";
-import { startSearch, tryFetchPosts } from "../../slices/postsSlice";
+import { startSearchAndFetch } from "../../slices/postsSlice";
 import { switchScreen } from "../../slices/viewSlice";
 
 export default function Search() {
@@ -8,8 +8,7 @@ export default function Search() {
   const dispatch = useAppDispatch();
 
   const submit = () => {
-    dispatch(startSearch(tags));
-    dispatch(tryFetchPosts());
+    dispatch(startSearchAndFetch(tags));
     dispatch(switchScreen('slideshow'));
   }
 

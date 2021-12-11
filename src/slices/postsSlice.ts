@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction, createAsyncThunk, createSelector } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction, createAsyncThunk, createSelector, ThunkAction, Action } from '@reduxjs/toolkit';
 import { Post } from '../api/e621/interfaces/posts';
 import PostAPI from '../api/e621/posts';
 import { RootState, AppThunk } from '../app/store';
@@ -7,7 +7,7 @@ export interface PostsState {
   posts: {[key: number]: Post};
   fetch_order: number[];
   fetch_tags: string;
-  fetch_page: number | null;
+  fetch_page: number;
   fetch_status: 'idle' | 'loading' | 'failed' | 'finished';
   fetch_id: string;
   slideshow_index: number;
@@ -30,7 +30,10 @@ const fetchPosts = createAsyncThunk<
 >(
   'posts/fetchPosts',
   async (_, thunkAPI) => {
-    const response = await PostAPI.getPosts({tags: selectTags(thunkAPI.getState())});
+    const response = await PostAPI.getPosts({
+      tags: selectTags(thunkAPI.getState()),
+      page: selectPage(thunkAPI.getState()),
+    });
     return response.data.posts;
   }
 );
@@ -78,7 +81,7 @@ export const postsSlice = createSlice({
         const posts = action.payload;
         if (posts.length === 0) {
           state.fetch_status = 'finished';
-          state.fetch_page = null;
+          state.fetch_page = 0;
           state.fetch_id = '';
         } else {
           state.fetch_status = 'idle';
@@ -126,6 +129,38 @@ export const tryFetchPosts = (): AppThunk => (
   const status = selectFetchStatus(getState());
   if (status === 'idle') {
     dispatch(fetchPosts());
+  }
+};
+
+export const startSearchAndFetch = (tags: string): AppThunk => (
+  dispatch,
+  getState
+) => {
+  dispatch(startSearch(tags));
+  dispatch(fetchPosts());
+};
+
+export const nextSlideAndPrefetch = (): AppThunk => (
+  dispatch,
+  getState
+) => {
+  dispatch(nextSlide());
+  const index = selectSlideshowIndex(getState());
+  const order = selectFetchOrder(getState());
+  if (index >= order.length - 5) {
+    dispatch(tryFetchPosts());
+  }
+};
+
+export const previousSlideAndPrefetch = (): AppThunk => (
+  dispatch,
+  getState
+) => {
+  dispatch(previousSlide());
+  const index = selectSlideshowIndex(getState());
+  const order = selectFetchOrder(getState());
+  if (index >= order.length - 5) {
+    dispatch(tryFetchPosts());
   }
 };
 
