@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction, createAsyncThunk, createSelector } from '@reduxjs/toolkit';
 import { Post } from '../api/e621/interfaces/posts';
 import PostAPI from '../api/e621/posts';
 import { RootState, AppThunk } from '../app/store';
@@ -10,6 +10,7 @@ export interface PostsState {
   fetch_page: number | null;
   fetch_status: 'idle' | 'loading' | 'failed' | 'finished';
   fetch_id: string;
+  slideshow_index: number;
 }
 
 const initialState: PostsState = {
@@ -19,6 +20,7 @@ const initialState: PostsState = {
   fetch_page: 1,
   fetch_status: 'idle',
   fetch_id: '',
+  slideshow_index: 0,
 };
 
 const fetchPosts = createAsyncThunk<
@@ -43,6 +45,7 @@ export const postsSlice = createSlice({
       state.fetch_page = 1;
       state.fetch_status = 'idle';
       state.fetch_id = '';
+      state.slideshow_index = 0;
     },
     startSearch: (state, action: PayloadAction<string>) => {
       state.fetch_order = [];
@@ -50,6 +53,7 @@ export const postsSlice = createSlice({
       state.fetch_page = 1;
       state.fetch_status = 'idle';
       state.fetch_id = '';
+      state.slideshow_index = 0;
     },
   },
   extraReducers: (builder) => {
@@ -84,6 +88,15 @@ export const { clear, startSearch } = postsSlice.actions;
 export const selectTags = (state: RootState) => state.posts.fetch_tags;
 export const selectPage = (state: RootState) => state.posts.fetch_page;
 export const selectFetchStatus = (state: RootState) => state.posts.fetch_status;
+export const selectFetchOrder = (state: RootState) => state.posts.fetch_order;
+export const selectPosts = (state: RootState) => state.posts.posts;
+
+export const selectSlideshowIndex = (state: RootState) => state.posts.slideshow_index;
+
+export const selectCurrentSlideshowPost = createSelector([selectPosts, selectFetchOrder, selectSlideshowIndex], (posts, order, index) => {
+  if (order.length === 0) return null;
+  return posts[order[index]];
+});
 
 export const tryFetchPosts = (): AppThunk => (
   dispatch,
