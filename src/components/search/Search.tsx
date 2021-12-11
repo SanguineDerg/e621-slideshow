@@ -12,10 +12,15 @@ export default function Search() {
     dispatch(switchScreen('slideshow'));
   }
 
+  const close = () => {
+    dispatch(switchScreen('slideshow'));
+  }
+
   return (
     <div>
       <input value={tags} onChange={e => setTags(e.target.value)} type="text" />
       <button onClick={submit}>Search</button>
+      <button onClick={close}>Close</button>
     </div>
   );
 }
