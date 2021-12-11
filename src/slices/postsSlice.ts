@@ -103,9 +103,20 @@ export const selectPosts = (state: RootState) => state.posts.posts;
 
 export const selectSlideshowIndex = (state: RootState) => state.posts.slideshow_index;
 
+export const selectCacheIndices = createSelector([selectSlideshowIndex, selectFetchOrder], (index, order) => {
+  // TODO add settings for cache size
+  const indices = Array.from({length: 6}, (_, i) => i + index - 2);
+  return indices.filter((i) => i >= 0 && i < order.length);
+});
+
 export const selectCurrentSlideshowPost = createSelector([selectPosts, selectFetchOrder, selectSlideshowIndex], (posts, order, index) => {
   if (order.length === 0) return null;
   return posts[order[index]];
+});
+
+export const selectCachePosts = createSelector([selectPosts, selectFetchOrder, selectCacheIndices], (posts, order, indices) => {
+  if (order.length === 0) return [];
+  return indices.map(index => posts[order[index]]);
 });
 
 export const tryFetchPosts = (): AppThunk => (
