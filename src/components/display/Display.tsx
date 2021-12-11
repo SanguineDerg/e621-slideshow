@@ -17,6 +17,11 @@ function getFiletype(post: Post | null) {
   }
 }
 
+function getBypassURL(post: Post) {
+  const md5 = post.file.md5;
+  return `https://static1.e621.net/data/${md5.substring(0, 2)}/${md5.substring(2, 4)}/${md5}.${post.file.ext}`;
+}
+
 export function Display() {
   const currentPost = useSelector(selectCurrentSlideshowPost);
 
@@ -25,7 +30,7 @@ export function Display() {
   return (
     <div className={styles.displayContainer}>
       {currentFiletype === 'image' && (
-        <img className={styles.image} src={currentPost?.file.url} alt="" />
+        <img className={styles.image} src={currentPost !== null ? (currentPost.file.url || getBypassURL(currentPost)) : undefined} alt="" />
       )}
       {currentFiletype === 'video' && (
         <div className={styles.text}><span>Video</span></div>
