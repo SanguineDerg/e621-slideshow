@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction, createAsyncThunk, createSelector, ThunkAction, Action } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction, createAsyncThunk, createSelector } from '@reduxjs/toolkit';
 import { Post } from '../api/e621/interfaces/posts';
 import PostAPI from '../api/e621/posts';
 import { RootState, AppThunk } from '../app/store';
