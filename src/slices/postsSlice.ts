@@ -55,6 +55,16 @@ export const postsSlice = createSlice({
       state.fetch_id = '';
       state.slideshow_index = 0;
     },
+    previousSlide: (state) => {
+      if (state.slideshow_index !== 0) {
+        state.slideshow_index -= 1;
+      }
+    },
+    nextSlide: (state) => {
+      if (state.slideshow_index < state.fetch_order.length - 1) {
+        state.slideshow_index += 1;
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -83,7 +93,7 @@ export const postsSlice = createSlice({
   },
 });
 
-export const { clear, startSearch } = postsSlice.actions;
+export const { clear, startSearch, previousSlide, nextSlide } = postsSlice.actions;
 
 export const selectTags = (state: RootState) => state.posts.fetch_tags;
 export const selectPage = (state: RootState) => state.posts.fetch_page;
