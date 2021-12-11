@@ -1,9 +1,11 @@
-import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
+import { configureStore, createAsyncThunk, ThunkAction, Action, AsyncThunkPayloadCreator, AsyncThunkOptions, AsyncThunk } from '@reduxjs/toolkit';
+import postsReducer from '../features/posts/postsSlice';
 import counterReducer from '../features/counter/counterSlice';
 
 export const store = configureStore({
   reducer: {
     counter: counterReducer,
+    posts: postsReducer,
   },
 });
 
@@ -15,3 +17,7 @@ export type AppThunk<ReturnType = void> = ThunkAction<
   unknown,
   Action<string>
 >;
+export function createAsyncAppThunk<Returned, ThunkArg = void>(typePrefix: string, payloadCreator: AsyncThunkPayloadCreator<Returned, ThunkArg, {state: RootState}>, options?: AsyncThunkOptions<ThunkArg, {state: RootState}>): AsyncThunk<Returned, ThunkArg, {state: RootState}>
+{
+    return createAsyncThunk(typePrefix, payloadCreator, options)
+}
