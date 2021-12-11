@@ -3,8 +3,6 @@ import { Post } from '../../api/e621/interfaces/posts';
 import { selectCurrentSlideshowPost } from '../../slices/postsSlice';
 import styles from './Display.module.css';
 
-type Filetype = 'image' | 'video' | 'flash';
-
 function getFiletype(post: Post | null) {
   if (post === null) return null;
   switch (post.file.ext) {
