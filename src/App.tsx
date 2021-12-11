@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import { Slideshow } from './features/slideshow/Slideshow';
+import { Slideshow } from './components/slideshow/Slideshow';
 
 function App() {
   return (
