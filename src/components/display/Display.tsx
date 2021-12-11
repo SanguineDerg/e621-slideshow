@@ -16,8 +16,6 @@ function getFiletype(post: Post | null) {
       return 'video';
     case 'swf':
       return 'flash';
-    default:
-      return null;
   }
 }
 
@@ -36,9 +34,6 @@ export function Display() {
       )}
       {currentFiletype === 'flash' && (
         <div className={styles.text}><span>Flash</span></div>
-      )}
-      {currentFiletype === null && currentPost !== null && (
-        <div className={styles.text}><span>Invalid File Extension: {currentPost?.file.ext}</span></div>
       )}
     </div>
   );
