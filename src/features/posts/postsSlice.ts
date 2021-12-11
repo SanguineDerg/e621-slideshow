@@ -61,9 +61,11 @@ export const postsSlice = createSlice({
         if (posts.length === 0) {
           state.fetch_status = 'finished';
           state.fetch_page = null;
+          state.fetch_id = '';
         } else {
           state.fetch_status = 'idle';
           state.fetch_page = state.fetch_page && state.fetch_page + 1;
+          state.fetch_id = '';
           posts.forEach(post => {
             state.posts[post.id] = post;
             state.fetch_order.push(post.id);
