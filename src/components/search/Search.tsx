@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useAppDispatch } from "../../app/hooks";
-import { startSearch, tryFetchPosts } from "../../features/posts/postsSlice";
-import { switchScreen } from "../../features/view/viewSlice";
+import { startSearch, tryFetchPosts } from "../../slices/postsSlice";
+import { switchScreen } from "../../slices/viewSlice";
 
 export default function Search() {
   const [tags, setTags] = useState('');

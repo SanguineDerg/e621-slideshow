@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
-import { Post } from '../../api/e621/interfaces/posts';
-import PostAPI from '../../api/e621/posts';
-import { RootState, AppThunk } from '../../app/store';
+import { Post } from '../api/e621/interfaces/posts';
+import PostAPI from '../api/e621/posts';
+import { RootState, AppThunk } from '../app/store';
 
 export interface PostsState {
   posts: {[key: number]: Post};

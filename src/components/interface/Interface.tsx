@@ -1,5 +1,5 @@
 import { useAppDispatch } from '../../app/hooks';
-import { switchScreen } from '../../features/view/viewSlice';
+import { switchScreen } from '../../slices/viewSlice';
 import styles from './Interface.module.css';
 
 export function Interface() {

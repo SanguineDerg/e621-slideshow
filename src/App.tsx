@@ -4,7 +4,7 @@ import { useAppSelector } from './app/hooks';
 import Search from './components/search/Search';
 import { Slideshow } from './components/slideshow/Slideshow';
 import View from './components/view/View';
-import { selectScreen } from './features/view/viewSlice';
+import { selectScreen } from './slices/viewSlice';
 
 function App() {
   const screen = useAppSelector(selectScreen);
