@@ -1,11 +1,17 @@
 import React from 'react';
 import './App.css';
+import { useAppSelector } from './app/hooks';
+import Search from './components/search/Search';
 import { Slideshow } from './components/slideshow/Slideshow';
+import View from './components/view/View';
+import { selectScreen } from './features/view/viewSlice';
 
 function App() {
+  const screen = useAppSelector(selectScreen);
   return (
     <div className="App">
-      <Slideshow />
+      <View visible={screen === 'search'} ><Search /></View>
+      <View visible={screen === 'slideshow'} ><Slideshow /></View>
     </div>
   );
 }

@@ -1,7 +1,7 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { Post } from '../../api/e621/interfaces/posts';
 import PostAPI from '../../api/e621/posts';
-import { RootState, AppThunk, createAsyncAppThunk } from '../../app/store';
+import { RootState, AppThunk } from '../../app/store';
 
 export interface PostsState {
   posts: {[key: number]: Post};
@@ -21,11 +21,15 @@ const initialState: PostsState = {
   fetch_id: '',
 };
 
-const fetchPosts = createAsyncAppThunk(
+const fetchPosts = createAsyncThunk<
+  Post[],
+  void,
+  {state: RootState}
+>(
   'posts/fetchPosts',
   async (_, thunkAPI) => {
     const response = await PostAPI.getPosts({tags: selectTags(thunkAPI.getState())});
-    return response.data;
+    return response.data.posts;
   }
 );
 
