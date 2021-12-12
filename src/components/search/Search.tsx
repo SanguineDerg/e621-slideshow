@@ -22,9 +22,9 @@ export default function Search() {
 
   return (
     <div>
-      <input value={tags} onChange={e => setTags(e.target.value)} type="text" />
-      <button onClick={submit}>Search</button>
-      <button onClick={close}>Close</button>
+      <input value={tags} onChange={e => setTags(e.target.value)} type="text" /><br/>
+      <button onClick={submit}>Search</button><br/>
+      <button onClick={close}>Close</button><br/>
       <button onClick={openSettings}>Settings</button>
     </div>
   );
