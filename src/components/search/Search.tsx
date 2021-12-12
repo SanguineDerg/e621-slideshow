@@ -12,6 +12,10 @@ export default function Search() {
     dispatch(switchScreen('slideshow'));
   }
 
+  const openSettings = () => {
+    dispatch(switchScreen('settings'));
+  }
+
   const close = () => {
     dispatch(switchScreen('slideshow'));
   }
@@ -21,6 +25,7 @@ export default function Search() {
       <input value={tags} onChange={e => setTags(e.target.value)} type="text" />
       <button onClick={submit}>Search</button>
       <button onClick={close}>Close</button>
+      <button onClick={openSettings}>Settings</button>
     </div>
   );
 }

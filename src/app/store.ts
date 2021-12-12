@@ -1,12 +1,15 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
 import postsReducer from '../slices/postsSlice';
+import settingsSlice, { getLocalStorageSettings } from '../slices/settingsSlice';
 import viewReducer from '../slices/viewSlice';
 
 export const store = configureStore({
   reducer: {
     posts: postsReducer,
     view: viewReducer,
+    settings: settingsSlice,
   },
+  preloadedState: {settings: getLocalStorageSettings()},
 });
 
 export type AppDispatch = typeof store.dispatch;
