@@ -117,6 +117,10 @@ export const selectCurrentSlideshowPost = createSelector([selectPosts, selectFet
   return posts[order[index]];
 });
 
+export const selectCurrentSlideshowPostId = createSelector([selectCurrentSlideshowPost], (post) => {
+  return post !== null ? post.id : null;
+});
+
 export const selectCachePosts = createSelector([selectPosts, selectFetchOrder, selectCacheIndices], (posts, order, indices) => {
   if (order.length === 0) return [];
   return indices.map(index => posts[order[index]]);

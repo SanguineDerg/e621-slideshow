@@ -6,15 +6,18 @@
 	height: 100vh;
 }
 
-.mainControls {
+.mainControls, .extraControls {
 	position: absolute;
 	top: 0;
 	left: 0;
 	width: 100vw;
 	height: 100vh;
+	pointer-events: none;
+}
+
+.mainControls {
   animation: fadeout 2s linear forwards;
 	-webkit-animation: fadeout 2s linear forwards;
-	pointer-events: none;
 }
 
 @keyframes fadeout {
@@ -22,7 +25,7 @@
   100% {opacity: 0; }
 }
 
-.mainControls > * {
+.mainControls > *, .extraControls > * {
 	display: block;
 	border: solid #dddddd;
 	border-width: 2px;

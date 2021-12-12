@@ -1,0 +1,12 @@
+.manageSetButton {
+  pointer-events: all;
+  display: block;
+  font-size: 30px;
+  color: #ddd;
+  background-color: transparent;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: min(15vw,10vh);
+  height: min(15vw,10vh);
+}
