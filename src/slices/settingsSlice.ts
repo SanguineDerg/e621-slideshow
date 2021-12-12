@@ -62,9 +62,9 @@ export const settingsSlice = createSlice({
   },
 });
 
-export const { clear, setLogin } = settingsSlice.actions;
+export const { clear, setLogin, setImageDisplaySize, setVideoDisplaySize, setVideoDisplayType } = settingsSlice.actions;
 
-export const selectUsername = (state: RootState) => state.posts.fetch_tags;
-export const selectAPIKey = (state: RootState) => state.posts.fetch_page;
+export const selectUsername = (state: RootState) => state.settings.username;
+export const selectAPIKey = (state: RootState) => state.settings.api_key;
 
 export default settingsSlice.reducer;
