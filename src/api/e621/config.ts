@@ -10,7 +10,10 @@ const _axios = axios.create({
 
 _axios.interceptors.request.use(config => {
   // Add user agent through URL params
-  config.params._client = USER_AGENT;
+  config.params = {
+    ...config.params,
+    _client: USER_AGENT,
+  };
 
   // Add HTTP Basic Auth
   const username = readUsername();
