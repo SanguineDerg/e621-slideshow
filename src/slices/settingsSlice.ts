@@ -21,26 +21,45 @@ function writeSetting<SettingType>(name: string, setting: SettingType): boolean 
   }
 }
 
+export type ImageDisplaySize = 'full' | 'sample';
+export type VideoDisplaySize = 'full' | '720p' | '480p';
+export type VideoDisplayType = 'webm' | 'mp4';
+
 export interface SettingsState {
   username: string;
   api_key: string;
+  image_display_size: ImageDisplaySize;
+  video_display_size: VideoDisplaySize;
+  video_display_type: VideoDisplayType;
 }
 
 const initialState: SettingsState = {
   username: '',
   api_key: '',
+  image_display_size: 'sample',
+  video_display_size: '720p',
+  video_display_type: 'mp4',
 };
 
 export const readUsername = () => readSetting('settings.username', initialState.username);
 export const readAPIKey = () => readSetting('settings.api_key', initialState.api_key);
+export const readImageDisplaySize = () => readSetting('settings.image_display_size', initialState.image_display_size);
+export const readVideoDisplaySize = () => readSetting('settings.video_display_size', initialState.video_display_size);
+export const readVideoDisplayType = () => readSetting('settings.video_display_type', initialState.video_display_type);
 
 export const writeUsername = (username: string) => writeSetting('settings.username', username);
 export const writeAPIKey = (apiKey: string) => writeSetting('settings.api_key', apiKey);
+export const writeImageDisplaySize = (imageDisplaySize: ImageDisplaySize) => writeSetting('settings.image_display_size', imageDisplaySize);
+export const writeVideoDisplaySize = (videoDisplaySize: VideoDisplaySize) => writeSetting('settings.video_display_size', videoDisplaySize);
+export const writeVideoDisplayType = (videoDisplayType: VideoDisplayType) => writeSetting('settings.video_display_type', videoDisplayType);
 
 export const getLocalStorageSettings = () => {
   return {
     username: readUsername(),
     api_key: readAPIKey(),
+    image_display_size: readImageDisplaySize(),
+    video_display_size: readVideoDisplaySize(),
+    video_display_type: readVideoDisplayType(),
   } as SettingsState;
 }
 
@@ -59,6 +78,18 @@ export const settingsSlice = createSlice({
       writeUsername(action.payload.username);
       writeAPIKey(action.payload.apiKey);
     },
+    setImageDisplaySize: (state, action: PayloadAction<ImageDisplaySize>) => {
+      state.image_display_size = action.payload;
+      writeImageDisplaySize(action.payload);
+    },
+    setVideoDisplaySize: (state, action: PayloadAction<VideoDisplaySize>) => {
+      state.video_display_size = action.payload;
+      writeVideoDisplaySize(action.payload);
+    },
+    setVideoDisplayType: (state, action: PayloadAction<VideoDisplayType>) => {
+      state.video_display_type = action.payload;
+      writeVideoDisplayType(action.payload);
+    },
   },
 });
 
@@ -66,5 +97,8 @@ export const { clear, setLogin, setImageDisplaySize, setVideoDisplaySize, setVid
 
 export const selectUsername = (state: RootState) => state.settings.username;
 export const selectAPIKey = (state: RootState) => state.settings.api_key;
+export const selectImageDisplaySize = (state: RootState) => state.settings.image_display_size;
+export const selectVideoDisplaySize = (state: RootState) => state.settings.video_display_size;
+export const selectVideoDisplayType = (state: RootState) => state.settings.video_display_type;
 
 export default settingsSlice.reducer;
