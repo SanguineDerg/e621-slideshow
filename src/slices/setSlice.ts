@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction, createAsyncThunk, createSelector } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { ManagedSets, Set } from '../api/e621/interfaces/sets';
 import SetsAPI from '../api/e621/sets';
 import { RootState } from '../app/store';
@@ -53,6 +53,20 @@ export const addCurrentPostToSet = createAsyncThunk<
   }
 );
 
+export const removeCurrentPostFromSet = createAsyncThunk<
+  Set | null,
+  number,
+  {state: RootState}
+>(
+  'sets/removeCurrentPostFromSet',
+  async (postId, thunkAPI) => {
+    const setId = selectWorkingSetId(thunkAPI.getState());
+    if (setId === null) return null;
+    const response = await SetsAPI.removePostFromSet(postId, setId);
+    return response.data;
+  }
+);
+
 export const setSlice = createSlice({
   name: 'sets',
   initialState,
@@ -94,6 +108,20 @@ export const setSlice = createSlice({
         }
       })
       .addCase(addCurrentPostToSet.rejected, (state, action) => {
+        state.update_set_status = 'failed';
+      })
+      .addCase(removeCurrentPostFromSet.pending, (state, action) => {
+        state.update_set_status = 'working';
+      })
+      .addCase(removeCurrentPostFromSet.fulfilled, (state, action) => {
+        state.working_set = action.payload;
+        if (action.payload === null) {
+          state.update_set_status = 'failed';
+        } else {
+          state.update_set_status = 'removed';
+        }
+      })
+      .addCase(removeCurrentPostFromSet.rejected, (state, action) => {
         state.update_set_status = 'failed';
       });
   },

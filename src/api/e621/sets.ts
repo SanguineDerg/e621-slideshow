@@ -16,6 +16,12 @@ const SetsAPI = {
     formData.append('post_ids[]', postId.toString());
     return e621.post<Set>(`post_sets/${setId}/add_posts.json`, formData);
   },
+  // Removes a post from a set
+  removePostFromSet: (postId: number, setId: number) => {
+    const formData = new FormData();
+    formData.append('post_ids[]', postId.toString());
+    return e621.post<Set>(`post_sets/${setId}/remove_posts.json`, formData);
+  },
 }
 
 export default SetsAPI

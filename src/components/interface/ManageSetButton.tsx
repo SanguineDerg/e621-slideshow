@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { selectCurrentSlideshowPostId, selectIsCurrentPostInSet } from "../../slices/postsSlice";
-import { addCurrentPostToSet, selectUpdateSetStatus } from "../../slices/setSlice";
+import { addCurrentPostToSet, removeCurrentPostFromSet, selectUpdateSetStatus, selectWorkingSet } from "../../slices/setSlice";
 import styles from './ManageSetButton.module.css';
 
 export default function ManageSetButton() {
   const updateSetState = useAppSelector(selectUpdateSetStatus);
   const currentPostId = useAppSelector(selectCurrentSlideshowPostId);
   const isPostInSet = useAppSelector(selectIsCurrentPostInSet);
+  const workingSet = useAppSelector(selectWorkingSet);
 
   const [icon, setIcon] = useState('🗑️');
   const [timeout, setTimeoutVar] = useState<NodeJS.Timeout | null>(null);
@@ -43,8 +44,18 @@ export default function ManageSetButton() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [updateSetState, isPostInSet]);
 
-  if (currentPostId === null) return null;
+  if (currentPostId === null || workingSet === null) return null;
+
+  const handleClick = () => {
+    if (updateSetState === 'working') return;
+    if (isPostInSet) {
+      dispatch(removeCurrentPostFromSet(currentPostId));
+    } else {
+      dispatch(addCurrentPostToSet(currentPostId));
+    }
+  }
+
   return (
-    <button className={styles.manageSetButton} onClick={() => dispatch(addCurrentPostToSet(currentPostId))}>{icon}</button>
+    <button className={styles.manageSetButton} onClick={handleClick}>{icon}</button>
   );
 }
