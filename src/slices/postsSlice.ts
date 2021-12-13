@@ -2,6 +2,7 @@ import { createSlice, PayloadAction, createAsyncThunk, createSelector } from '@r
 import { Post } from '../api/e621/interfaces/posts';
 import PostAPI from '../api/e621/posts';
 import { RootState, AppThunk } from '../app/store';
+import { resetUpdateSetStatus, selectWorkingSet } from './setSlice';
 
 export interface PostsState {
   posts: {[key: number]: Post};
@@ -121,6 +122,10 @@ export const selectCurrentSlideshowPostId = createSelector([selectCurrentSlidesh
   return post !== null ? post.id : null;
 });
 
+export const selectIsCurrentPostInSet = createSelector([selectCurrentSlideshowPostId, selectWorkingSet], (postId, set) => {
+  return (postId !== null && set !== null) ? set.post_ids.includes(postId) : false;
+});
+
 export const selectCachePosts = createSelector([selectPosts, selectFetchOrder, selectCacheIndices], (posts, order, indices) => {
   if (order.length === 0) return [];
   return indices.map(index => posts[order[index]]);
@@ -142,6 +147,7 @@ export const startSearchAndFetch = (tags: string): AppThunk => (
 ) => {
   dispatch(startSearch(tags));
   dispatch(fetchPosts());
+  dispatch(resetUpdateSetStatus());
 };
 
 export const nextSlideAndPrefetch = (): AppThunk => (
@@ -149,6 +155,7 @@ export const nextSlideAndPrefetch = (): AppThunk => (
   getState
 ) => {
   dispatch(nextSlide());
+  dispatch(resetUpdateSetStatus());
   const index = selectSlideshowIndex(getState());
   const order = selectFetchOrder(getState());
   if (index >= order.length - 5) {
@@ -161,6 +168,7 @@ export const previousSlideAndPrefetch = (): AppThunk => (
   getState
 ) => {
   dispatch(previousSlide());
+  dispatch(resetUpdateSetStatus());
   const index = selectSlideshowIndex(getState());
   const order = selectFetchOrder(getState());
   if (index >= order.length - 5) {

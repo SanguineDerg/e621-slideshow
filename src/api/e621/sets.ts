@@ -6,6 +6,11 @@ const SetsAPI = {
   getManagedSets: () => {
     return e621.get<ManagedSets>('post_sets/for_select.json');
   },
+  // Fetches a set by id
+  getSetById: (setId: number) => {
+    return e621.get<Set>(`post_sets/${setId}.json`);
+  },
+  // Adds a post to a set
   addPostToSet: (postId: number, setId: number) => {
     const formData = new FormData();
     formData.append('post_ids[]', postId.toString());

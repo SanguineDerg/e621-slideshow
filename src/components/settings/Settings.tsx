@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { ImageDisplaySize, selectImageDisplaySize, selectUsername, setImageDisplaySize, setLogin } from "../../slices/settingsSlice";
-import { fetchManagedSets, selectManagedSets, selectWorkingSetId, setWorkingSetId } from "../../slices/setSlice";
+import { fetchManagedSets, fetchWorkingSet, selectManagedSets, selectWorkingSetId, setWorkingSetId } from "../../slices/setSlice";
 import { switchScreen } from "../../slices/viewSlice";
 
 export default function Settings() {
@@ -20,6 +20,7 @@ export default function Settings() {
   }
 
   const close = () => {
+    dispatch(fetchWorkingSet());
     dispatch(switchScreen('search'));
   }
 
