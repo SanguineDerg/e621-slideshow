@@ -13,7 +13,7 @@ function App() {
   return (
     <div className="App">
       <Cache />
-      <View visible={screen === 'slideshow'} ><Slideshow /></View>
+      <View disabled={screen !== 'slideshow'} ><Slideshow /></View>
       <View visible={screen === 'search'} ><Search /></View>
       <View visible={screen === 'settings'} ><Settings /></View>
     </div>
