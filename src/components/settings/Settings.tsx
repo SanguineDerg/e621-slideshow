@@ -17,6 +17,8 @@ export default function Settings() {
 
   const saveLogin = () => {
     dispatch(setLogin({username: username, apiKey: apiKey}));
+    setLocalUsername('');
+    setLocalAPIKey('');
   }
 
   const close = () => {
