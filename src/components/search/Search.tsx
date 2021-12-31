@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 import { useAppDispatch } from "../../app/hooks";
 import { startSearchAndFetch } from "../../slices/postsSlice";
 import { switchScreen } from "../../slices/viewSlice";
@@ -7,9 +7,10 @@ export default function Search() {
   const [tags, setTags] = useState('');
   const dispatch = useAppDispatch();
 
-  const submit = () => {
+  const submit = (e: FormEvent) => {
     dispatch(startSearchAndFetch(tags));
     dispatch(switchScreen('slideshow'));
+    e.preventDefault();
   }
 
   const openSettings = () => {
@@ -22,10 +23,12 @@ export default function Search() {
 
   return (
     <div>
-      <input value={tags} onChange={e => setTags(e.target.value)} type="text" /><br/>
-      <button onClick={submit}>Search</button><br/>
-      <button onClick={close}>Close</button><br/>
-      <button onClick={openSettings}>Settings</button>
+      <form onSubmit={submit}>
+        <input value={tags} onChange={e => setTags(e.target.value)} type="text" /><br/>
+        <button type="submit">Search</button><br/>
+        <button type="button" onClick={close}>Close</button><br/>
+        <button type="button" onClick={openSettings}>Settings</button>
+      </form>
     </div>
   );
 }
