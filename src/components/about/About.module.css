@@ -1,0 +1,15 @@
+.aboutContainer {
+  margin: 3em 2em;
+  color: #eeeeee;
+  font-family: Verdana, sans-serif;
+}
+
+.aboutBody {
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.8em;
+  font-size: 1.5em;
+  max-width: 500px;
+}

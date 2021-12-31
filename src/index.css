@@ -86,3 +86,17 @@ fieldset {
 fieldset legend {
   padding: 0.2em;
 }
+
+a {
+ color:#40a9e6;
+ text-decoration:none
+}
+
+p {
+  text-align: left;
+  margin: 0;
+  padding: 0.4em;
+  border-left: solid #444444 0.3em;
+  background-color: #222222;
+  font-size: 0.8em;
+}

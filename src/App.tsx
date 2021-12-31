@@ -1,6 +1,7 @@
 import React from 'react';
 import './App.css';
 import { useAppSelector } from './app/hooks';
+import About from './components/about/About';
 import Cache from './components/cache/Cache';
 import Search from './components/search/Search';
 import Settings from './components/settings/Settings';
@@ -16,6 +17,7 @@ function App() {
       <View disabled={screen !== 'slideshow'} ><Slideshow /></View>
       <View visible={screen === 'search'} ><Search /></View>
       <View visible={screen === 'settings'} ><Settings /></View>
+      <View visible={screen === 'about'} ><About /></View>
     </div>
   );
 }

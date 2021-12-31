@@ -18,6 +18,10 @@ export default function Search() {
     dispatch(switchScreen('settings'));
   }
 
+  const openAbout = () => {
+    dispatch(switchScreen('about'));
+  }
+
   const close = () => {
     dispatch(switchScreen('slideshow'));
   }
@@ -30,6 +34,7 @@ export default function Search() {
         <button type="submit">Search</button>
         <button type="button" onClick={close}>Close</button>
         <button type="button" onClick={openSettings}>Settings</button>
+        <button type="button" onClick={openAbout}>About</button>
       </form>
     </div>
   );
