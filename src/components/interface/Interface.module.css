@@ -45,6 +45,9 @@
 	width: 30%;
 	height: 100%;
 	box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .previousSlide {
@@ -54,6 +57,9 @@
 	width: 30%;
 	height: 100%;
 	box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .exitSlideshow {
@@ -63,6 +69,9 @@
 	width: 40%;
 	height: 50%;
 	box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .viewSource {
