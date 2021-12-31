@@ -2,6 +2,7 @@ import { FormEvent, useState } from "react";
 import { useAppDispatch } from "../../app/hooks";
 import { startSearchAndFetch } from "../../slices/postsSlice";
 import { switchScreen } from "../../slices/viewSlice";
+import styles from "./Search.module.css";
 
 export default function Search() {
   const [tags, setTags] = useState('');
@@ -22,11 +23,12 @@ export default function Search() {
   }
 
   return (
-    <div>
-      <form onSubmit={submit}>
-        <input value={tags} onChange={e => setTags(e.target.value)} type="text" /><br/>
-        <button type="submit">Search</button><br/>
-        <button type="button" onClick={close}>Close</button><br/>
+    <div className={styles.searchContainer}>
+      <h1>Search</h1>
+      <form onSubmit={submit} className={styles.searchForm}>
+        <input value={tags} onChange={e => setTags(e.target.value)} type="text" placeholder="rating:s ..." />
+        <button type="submit">Search</button>
+        <button type="button" onClick={close}>Close</button>
         <button type="button" onClick={openSettings}>Settings</button>
       </form>
     </div>
