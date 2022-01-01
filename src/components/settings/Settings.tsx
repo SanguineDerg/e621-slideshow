@@ -42,17 +42,6 @@ export default function Settings() {
       </fieldset>
       
       <fieldset>
-        <legend>Display</legend>
-        <label>
-          Image size
-        </label>
-        <select value={currentImageDisplaySize} onChange={e => dispatch(setImageDisplaySize(e.target.value as ImageDisplaySize))}>
-          <option value="full">Full Image</option>
-          <option value="sample">Sample Image</option>
-        </select>
-      </fieldset>
-
-      <fieldset>
         <legend>Set Management</legend>
         <button onClick={() => dispatch(fetchManagedSets())}>Get sets</button>
         {managedSets !== null && (
@@ -72,6 +61,17 @@ export default function Settings() {
             </select>
           </>
         )}
+      </fieldset>
+      
+      <fieldset>
+        <legend>Display</legend>
+        <label>
+          Image size
+        </label>
+        <select value={currentImageDisplaySize} onChange={e => dispatch(setImageDisplaySize(e.target.value as ImageDisplaySize))}>
+          <option value="full">Full Image</option>
+          <option value="sample">Sample Image</option>
+        </select>
       </fieldset>
 
       <button onClick={close}>Close</button>
