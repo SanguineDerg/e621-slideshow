@@ -25,7 +25,7 @@
   100% {opacity: 0; }
 }
 
-.mainControls > *, .extraControls > * {
+.mainControls > * {
 	display: block;
 	border: solid #dddddd;
 	border-width: 2px;
@@ -35,6 +35,9 @@
 	color: #dddddd;
 	text-shadow: 0 0 4px #000000;
 	background-color: Transparent;
+}
+
+.mainControls > *, .extraControls > * {
 	pointer-events: all;
 }
 

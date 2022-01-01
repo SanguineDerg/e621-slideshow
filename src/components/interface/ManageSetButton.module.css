@@ -1,12 +1,13 @@
 .manageSetButton {
   pointer-events: all;
   display: block;
-  font-size: 30px;
-  color: #ddd;
   background-color: transparent;
+  background-position: center;
+  background-size: contain;
   position: absolute;
   bottom: calc(min(15vw,15vh) / 2);
   right: calc(min(15vw,15vh) / 2);
   width: min(15vw,15vh);
   height: min(15vw,15vh);
+  padding: 0;
 }

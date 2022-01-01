@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { ButtonIcon } from "../../common/buttons";
 import { selectCurrentSlideshowPostId, selectIsCurrentPostInSet } from "../../slices/postsSlice";
 import { addCurrentPostToSet, removeCurrentPostFromSet, selectUpdateSetStatus, selectWorkingSet } from "../../slices/setSlice";
 import styles from './ManageSetButton.module.css';
@@ -10,7 +11,7 @@ export default function ManageSetButton() {
   const isPostInSet = useAppSelector(selectIsCurrentPostInSet);
   const workingSet = useAppSelector(selectWorkingSet);
 
-  const [icon, setIcon] = useState('🗑️');
+  const [icon, setIcon] = useState<ButtonIcon>('empty');
   const [timeout, setTimeoutVar] = useState<NodeJS.Timeout | null>(null);
 
   const dispatch = useAppDispatch();
@@ -27,17 +28,17 @@ export default function ManageSetButton() {
       case 'added':
       case 'removed':
         cancelTimeout();
-        setIcon(isPostInSet ? '➖' : '➕');
+        setIcon(isPostInSet ? 'remove' : 'add');
         break;
       case 'working':
         cancelTimeout();
-        setIcon('🔄');
+        setIcon('working');
         break;
       case 'failed':
         cancelTimeout();
-        setIcon('❌');
+        setIcon('excluded');
         setTimeoutVar(setTimeout(() => {
-          setIcon(isPostInSet ? '➖' : '➕');
+          setIcon(isPostInSet ? 'remove' : 'add');
         }, 2000));
         break;
     }
@@ -84,6 +85,7 @@ export default function ManageSetButton() {
   }
 
   return (
-    <button className={styles.manageSetButton} onClick={handleClick}>{icon}</button>
+    <button className={styles.manageSetButton} onClick={handleClick} style={{backgroundImage: `url("${process.env.PUBLIC_URL}/buttons/${icon}.svg")`}}>
+    </button>
   );
 }
