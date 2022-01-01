@@ -1,0 +1,1 @@
+export type ButtonIcon = 'empty' | 'add' | 'remove' | 'working' | 'up' | 'down' | 'neutral' | 'included' | 'excluded';
