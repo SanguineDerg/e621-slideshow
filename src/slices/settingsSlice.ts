@@ -1,25 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { readLocalStorage, writeLocalStorage } from '../app/localStorage';
 import { RootState } from '../app/store';
-
-function readSetting<SettingType>(name: string, fallback: SettingType): SettingType {
-  const store = localStorage.getItem(name);
-  if (store === null) return fallback;
-  try {
-    const setting: SettingType = JSON.parse(store);
-    return setting;
-  } catch {
-    return fallback;
-  }
-}
-
-function writeSetting<SettingType>(name: string, setting: SettingType): boolean {
-  try {
-    localStorage.setItem(name, JSON.stringify(setting));
-    return true;
-  } catch {
-    return false;
-  }
-}
 
 export type ImageDisplaySize = 'full' | 'sample';
 export type VideoDisplaySize = 'full' | '720p' | '480p';
@@ -45,19 +26,19 @@ const initialState: SettingsState = {
   set_management_button_type: 'mobile',
 };
 
-export const readUsername = () => readSetting('settings.username', initialState.username);
-export const readAPIKey = () => readSetting('settings.api_key', initialState.api_key);
-export const readImageDisplaySize = () => readSetting('settings.image_display_size', initialState.image_display_size);
-export const readVideoDisplaySize = () => readSetting('settings.video_display_size', initialState.video_display_size);
-export const readVideoDisplayType = () => readSetting('settings.video_display_type', initialState.video_display_type);
-export const readSetManagementButtonType = () => readSetting('settings.set_management_button_type', initialState.set_management_button_type);
+export const readUsername = () => readLocalStorage('settings.username', initialState.username);
+export const readAPIKey = () => readLocalStorage('settings.api_key', initialState.api_key);
+export const readImageDisplaySize = () => readLocalStorage('settings.image_display_size', initialState.image_display_size);
+export const readVideoDisplaySize = () => readLocalStorage('settings.video_display_size', initialState.video_display_size);
+export const readVideoDisplayType = () => readLocalStorage('settings.video_display_type', initialState.video_display_type);
+export const readSetManagementButtonType = () => readLocalStorage('settings.set_management_button_type', initialState.set_management_button_type);
 
-export const writeUsername = (username: string) => writeSetting('settings.username', username);
-export const writeAPIKey = (apiKey: string) => writeSetting('settings.api_key', apiKey);
-export const writeImageDisplaySize = (imageDisplaySize: ImageDisplaySize) => writeSetting('settings.image_display_size', imageDisplaySize);
-export const writeVideoDisplaySize = (videoDisplaySize: VideoDisplaySize) => writeSetting('settings.video_display_size', videoDisplaySize);
-export const writeVideoDisplayType = (videoDisplayType: VideoDisplayType) => writeSetting('settings.video_display_type', videoDisplayType);
-export const writeSetManagementButtonType = (setManagementButtonType: SetManagementButtonType) => writeSetting('settings.set_management_button_type', setManagementButtonType);
+export const writeUsername = (username: string) => writeLocalStorage('settings.username', username);
+export const writeAPIKey = (apiKey: string) => writeLocalStorage('settings.api_key', apiKey);
+export const writeImageDisplaySize = (imageDisplaySize: ImageDisplaySize) => writeLocalStorage('settings.image_display_size', imageDisplaySize);
+export const writeVideoDisplaySize = (videoDisplaySize: VideoDisplaySize) => writeLocalStorage('settings.video_display_size', videoDisplaySize);
+export const writeVideoDisplayType = (videoDisplayType: VideoDisplayType) => writeLocalStorage('settings.video_display_type', videoDisplayType);
+export const writeSetManagementButtonType = (setManagementButtonType: SetManagementButtonType) => writeLocalStorage('settings.set_management_button_type', setManagementButtonType);
 
 export const getLocalStorageSettings = () => {
   return {
