@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { ManagedSets, Set } from '../api/e621/interfaces/sets';
 import SetsAPI from '../api/e621/sets';
+import { readLocalStorage, writeLocalStorage } from '../app/localStorage';
 import { RootState } from '../app/store';
 
 export interface SetState {
@@ -16,6 +17,17 @@ const initialState: SetState = {
   working_set: null,
   update_set_status: 'idle',
 };
+
+export const readWorkingSetId = () => readLocalStorage('sets.working_set_id', initialState.working_set_id);
+
+export const writeWorkingSetId = (workingSetId: number | null) => writeLocalStorage('sets.working_set_id', workingSetId);
+
+export const getLocalStorageSets = () => {
+  return {
+    ...initialState,
+    working_set_id: readWorkingSetId(),
+  } as SetState;
+}
 
 export const fetchManagedSets = createAsyncThunk(
   'sets/fetchManagedSets',
@@ -74,6 +86,7 @@ export const setSlice = createSlice({
     setWorkingSetId: (state, action: PayloadAction<number | null>) => {
       state.working_set_id = action.payload;
       state.working_set = null;
+      writeWorkingSetId(action.payload);
     },
     resetUpdateSetStatus: (state) => {
       state.update_set_status = 'idle';
@@ -89,6 +102,7 @@ export const setSlice = createSlice({
         state.managed_sets = null;
         state.working_set_id = null;
         state.working_set = null;
+        writeWorkingSetId(null);
       })
       .addCase(fetchWorkingSet.fulfilled, (state, action) => {
         state.working_set = action.payload;
