@@ -14,35 +14,26 @@ export default function ManageSetButton() {
   const buttonType = useAppSelector(selectSetManagementButtonType);
 
   const [icon, setIcon] = useState<ButtonIcon>('empty');
-  const [timeout, setTimeoutVar] = useState<NodeJS.Timeout | null>(null);
   const [className, setClassName] = useState<string>(styles.manageSetButton);
+  const [backgroundColor, setBackgroundColor] = useState('transparent')
 
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    const cancelTimeout = () => {
-      if (timeout !== null) {
-        clearTimeout(timeout);
-        setTimeoutVar(null);
-      }
-    };
     switch (updateSetState) {
       case 'idle':
       case 'added':
       case 'removed':
-        cancelTimeout();
+        setBackgroundColor('transparent');
         setIcon(isPostInSet ? 'remove' : 'add');
         break;
       case 'working':
-        cancelTimeout();
+        setBackgroundColor('transparent');
         setIcon('working');
         break;
       case 'failed':
-        cancelTimeout();
-        setIcon('excluded');
-        setTimeoutVar(setTimeout(() => {
-          setIcon(isPostInSet ? 'remove' : 'add');
-        }, 2000));
+        setBackgroundColor('rgba(255,0,0,0.1)');
+        setIcon(isPostInSet ? 'remove' : 'add');
         break;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -100,7 +91,7 @@ export default function ManageSetButton() {
   if (currentPostId === null || workingSet === null) return null;
 
   return (
-    <button className={className} onClick={handleClick} style={{backgroundImage: `url("${process.env.PUBLIC_URL}/buttons/${icon}.svg")`}}>
+    <button className={className} onClick={handleClick} style={{backgroundImage: `url("${process.env.PUBLIC_URL}/buttons/${icon}.svg")`, backgroundColor: backgroundColor}}>
     </button>
   );
 }
