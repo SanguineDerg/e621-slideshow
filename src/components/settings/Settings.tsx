@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { ImageDisplaySize, selectImageDisplaySize, selectUsername, setImageDisplaySize, setLogin } from "../../slices/settingsSlice";
+import { ImageDisplaySize, selectImageDisplaySize, selectSetManagementButtonType, selectUsername, setImageDisplaySize, setLogin, SetManagementButtonType, setSetManagementButtonType } from "../../slices/settingsSlice";
 import { fetchManagedSets, fetchWorkingSet, selectManagedSets, selectWorkingSetId, setWorkingSetId } from "../../slices/setSlice";
 import { switchScreen } from "../../slices/viewSlice";
 import styles from "./Settings.module.css";
@@ -13,6 +13,7 @@ export default function Settings() {
   const currentImageDisplaySize = useAppSelector(selectImageDisplaySize);
   const managedSets = useAppSelector(selectManagedSets);
   const workingSetId = useAppSelector(selectWorkingSetId);
+  const currentSetManagementButtonType = useAppSelector(selectSetManagementButtonType);
   
   const dispatch = useAppDispatch();
 
@@ -71,6 +72,13 @@ export default function Settings() {
         <select value={currentImageDisplaySize} onChange={e => dispatch(setImageDisplaySize(e.target.value as ImageDisplaySize))}>
           <option value="full">Full Image</option>
           <option value="sample">Sample Image</option>
+        </select>
+        <label>
+          Set Management Button Size
+        </label>
+        <select value={currentSetManagementButtonType} onChange={e => dispatch(setSetManagementButtonType(e.target.value as SetManagementButtonType))}>
+          <option value="mobile">Mobile</option>
+          <option value="desktop">Desktop</option>
         </select>
       </fieldset>
 

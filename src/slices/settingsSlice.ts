@@ -25,12 +25,15 @@ export type ImageDisplaySize = 'full' | 'sample';
 export type VideoDisplaySize = 'full' | '720p' | '480p';
 export type VideoDisplayType = 'webm' | 'mp4';
 
+export type SetManagementButtonType = 'desktop' | 'mobile';
+
 export interface SettingsState {
   username: string;
   api_key: string;
   image_display_size: ImageDisplaySize;
   video_display_size: VideoDisplaySize;
   video_display_type: VideoDisplayType;
+  set_management_button_type: SetManagementButtonType;
 }
 
 const initialState: SettingsState = {
@@ -39,6 +42,7 @@ const initialState: SettingsState = {
   image_display_size: 'sample',
   video_display_size: '720p',
   video_display_type: 'mp4',
+  set_management_button_type: 'mobile',
 };
 
 export const readUsername = () => readSetting('settings.username', initialState.username);
@@ -46,12 +50,14 @@ export const readAPIKey = () => readSetting('settings.api_key', initialState.api
 export const readImageDisplaySize = () => readSetting('settings.image_display_size', initialState.image_display_size);
 export const readVideoDisplaySize = () => readSetting('settings.video_display_size', initialState.video_display_size);
 export const readVideoDisplayType = () => readSetting('settings.video_display_type', initialState.video_display_type);
+export const readSetManagementButtonType = () => readSetting('settings.set_management_button_type', initialState.set_management_button_type);
 
 export const writeUsername = (username: string) => writeSetting('settings.username', username);
 export const writeAPIKey = (apiKey: string) => writeSetting('settings.api_key', apiKey);
 export const writeImageDisplaySize = (imageDisplaySize: ImageDisplaySize) => writeSetting('settings.image_display_size', imageDisplaySize);
 export const writeVideoDisplaySize = (videoDisplaySize: VideoDisplaySize) => writeSetting('settings.video_display_size', videoDisplaySize);
 export const writeVideoDisplayType = (videoDisplayType: VideoDisplayType) => writeSetting('settings.video_display_type', videoDisplayType);
+export const writeSetManagementButtonType = (setManagementButtonType: SetManagementButtonType) => writeSetting('settings.set_management_button_type', setManagementButtonType);
 
 export const getLocalStorageSettings = () => {
   return {
@@ -60,6 +66,7 @@ export const getLocalStorageSettings = () => {
     image_display_size: readImageDisplaySize(),
     video_display_size: readVideoDisplaySize(),
     video_display_type: readVideoDisplayType(),
+    set_management_button_type: readSetManagementButtonType(),
   } as SettingsState;
 }
 
@@ -74,6 +81,7 @@ export const settingsSlice = createSlice({
       writeImageDisplaySize(initialState.image_display_size);
       writeVideoDisplaySize(initialState.video_display_size);
       writeVideoDisplayType(initialState.video_display_type);
+      writeSetManagementButtonType(initialState.set_management_button_type);
     },
     setLogin: (state, action: PayloadAction<{username: string, apiKey: string}>) => {
       state.username = action.payload.username;
@@ -93,15 +101,20 @@ export const settingsSlice = createSlice({
       state.video_display_type = action.payload;
       writeVideoDisplayType(action.payload);
     },
+    setSetManagementButtonType: (state, action: PayloadAction<SetManagementButtonType>) => {
+      state.set_management_button_type = action.payload;
+      writeSetManagementButtonType(action.payload);
+    },
   },
 });
 
-export const { clear, setLogin, setImageDisplaySize, setVideoDisplaySize, setVideoDisplayType } = settingsSlice.actions;
+export const { clear, setLogin, setImageDisplaySize, setVideoDisplaySize, setVideoDisplayType, setSetManagementButtonType } = settingsSlice.actions;
 
 export const selectUsername = (state: RootState) => state.settings.username;
 export const selectAPIKey = (state: RootState) => state.settings.api_key;
 export const selectImageDisplaySize = (state: RootState) => state.settings.image_display_size;
 export const selectVideoDisplaySize = (state: RootState) => state.settings.video_display_size;
 export const selectVideoDisplayType = (state: RootState) => state.settings.video_display_type;
+export const selectSetManagementButtonType = (state: RootState) => state.settings.set_management_button_type;
 
 export default settingsSlice.reducer;

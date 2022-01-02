@@ -3,6 +3,7 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { ButtonIcon } from "../../common/buttons";
 import { selectCurrentSlideshowPostId, selectIsCurrentPostInSet } from "../../slices/postsSlice";
 import { addCurrentPostToSet, removeCurrentPostFromSet, selectUpdateSetStatus, selectWorkingSet } from "../../slices/setSlice";
+import { selectSetManagementButtonType } from "../../slices/settingsSlice";
 import styles from './ManageSetButton.module.css';
 
 export default function ManageSetButton() {
@@ -10,9 +11,11 @@ export default function ManageSetButton() {
   const currentPostId = useAppSelector(selectCurrentSlideshowPostId);
   const isPostInSet = useAppSelector(selectIsCurrentPostInSet);
   const workingSet = useAppSelector(selectWorkingSet);
+  const buttonType = useAppSelector(selectSetManagementButtonType);
 
   const [icon, setIcon] = useState<ButtonIcon>('empty');
   const [timeout, setTimeoutVar] = useState<NodeJS.Timeout | null>(null);
+  const [className, setClassName] = useState<string>(styles.manageSetButton);
 
   const dispatch = useAppDispatch();
 
@@ -44,6 +47,18 @@ export default function ManageSetButton() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [updateSetState, isPostInSet]);
+
+  useEffect(() => {
+    switch (buttonType) {
+      case 'mobile':
+        setClassName(`${styles.manageSetButton} ${styles.mobile}`);
+        break;
+      case 'desktop':
+      default:
+        setClassName(styles.manageSetButton);
+        break;
+    }
+  }, [buttonType]);
 
   const tryAddToSet = useCallback(() => {
     if (currentPostId === null || updateSetState === 'working' || isPostInSet) return;
@@ -85,7 +100,7 @@ export default function ManageSetButton() {
   }
 
   return (
-    <button className={styles.manageSetButton} onClick={handleClick} style={{backgroundImage: `url("${process.env.PUBLIC_URL}/buttons/${icon}.svg")`}}>
+    <button className={className} onClick={handleClick} style={{backgroundImage: `url("${process.env.PUBLIC_URL}/buttons/${icon}.svg")`}}>
     </button>
   );
 }
