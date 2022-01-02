@@ -95,7 +95,7 @@ export default function ManageSetButton() {
     } else {
       dispatch(addCurrentPostToSet(currentPostId));
     }
-  }, []);
+  }, [dispatch, currentPostId, isPostInSet, updateSetState]);
   
   if (currentPostId === null || workingSet === null) return null;
 

@@ -8,7 +8,7 @@ export default function About() {
 
   const close = useCallback(() => {
     dispatch(switchScreen('search'));
-  }, []);
+  }, [dispatch]);
 
   return (
     <div className={styles.aboutContainer}>

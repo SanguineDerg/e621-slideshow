@@ -21,12 +21,12 @@ export default function Settings() {
     dispatch(setLogin({username: username, apiKey: apiKey}));
     setLocalUsername('');
     setLocalAPIKey('');
-  }, [username, apiKey]);
+  }, [dispatch, username, apiKey]);
 
   const close = useCallback(() => {
     dispatch(fetchWorkingSet());
     dispatch(switchScreen('search'));
-  }, []);
+  }, [dispatch]);
 
   return (
     <div className={styles.settingsContainer}>

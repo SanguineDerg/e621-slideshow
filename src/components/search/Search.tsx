@@ -12,19 +12,19 @@ export default function Search() {
     dispatch(startSearchAndFetch(tags));
     dispatch(switchScreen('slideshow'));
     e.preventDefault();
-  }, [tags]);
+  }, [dispatch, tags]);
 
   const openSettings = useCallback(() => {
     dispatch(switchScreen('settings'));
-  }, []);
+  }, [dispatch]);
 
   const openAbout = useCallback(() => {
     dispatch(switchScreen('about'));
-  }, []);
+  }, [dispatch]);
 
   const close = useCallback(() => {
     dispatch(switchScreen('slideshow'));
-  }, []);
+  }, [dispatch]);
 
   return (
     <div className={styles.searchContainer}>
