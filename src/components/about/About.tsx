@@ -1,7 +1,7 @@
-import { useCallback } from "react";
-import { useAppDispatch } from "../../app/hooks";
-import { switchScreen } from "../../slices/viewSlice";
-import styles from "./About.module.css";
+import { useCallback } from 'react';
+import { useAppDispatch } from '../../app/hooks';
+import { switchScreen } from '../../slices/viewSlice';
+import styles from './About.module.css';
 
 export default function About() {
   const dispatch = useAppDispatch();

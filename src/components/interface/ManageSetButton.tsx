@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { ButtonIcon } from "../../common/buttons";
-import { selectCurrentSlideshowPostId, selectIsCurrentPostInSet } from "../../slices/postsSlice";
-import { addCurrentPostToSet, removeCurrentPostFromSet, selectUpdateSetStatus, selectWorkingSet } from "../../slices/setSlice";
-import { selectSetManagementButtonType } from "../../slices/settingsSlice";
+import { useCallback, useEffect, useState } from 'react';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import { ButtonIcon } from '../../common/buttons';
+import { selectCurrentSlideshowPostId, selectIsCurrentPostInSet } from '../../slices/postsSlice';
+import { addCurrentPostToSet, removeCurrentPostFromSet, selectUpdateSetStatus, selectWorkingSet } from '../../slices/setSlice';
+import { selectSetManagementButtonType } from '../../slices/settingsSlice';
 import styles from './ManageSetButton.module.css';
 
 export default function ManageSetButton() {
@@ -64,10 +64,10 @@ export default function ManageSetButton() {
   const keydownHandler = useCallback((e: KeyboardEvent) => {
     if (e.repeat) return;
     switch (e.key) {
-      case "ArrowUp":
+      case 'ArrowUp':
         tryAddToSet();
         return;
-      case "ArrowDown":
+      case 'ArrowDown':
         tryRemoveFromSet();
         return;
       default: return;
@@ -75,8 +75,8 @@ export default function ManageSetButton() {
   }, [tryAddToSet, tryRemoveFromSet]);
 
   useEffect(() => {
-    window.addEventListener("keydown", keydownHandler, true);
-    return () => window.removeEventListener("keydown", keydownHandler, true);
+    window.addEventListener('keydown', keydownHandler, true);
+    return () => window.removeEventListener('keydown', keydownHandler, true);
   }, [keydownHandler]);
 
   const handleClick = useCallback(() => {

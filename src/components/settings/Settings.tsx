@@ -1,9 +1,9 @@
-import { useCallback, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { ImageDisplaySize, selectImageDisplaySize, selectSetManagementButtonType, selectUsername, setImageDisplaySize, setLogin, SetManagementButtonType, setSetManagementButtonType } from "../../slices/settingsSlice";
-import { fetchManagedSets, fetchWorkingSet, selectManagedSets, selectWorkingSetId, setWorkingSetId } from "../../slices/setSlice";
-import { switchScreen } from "../../slices/viewSlice";
-import styles from "./Settings.module.css";
+import { useCallback, useState } from 'react';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import { ImageDisplaySize, selectImageDisplaySize, selectSetManagementButtonType, selectUsername, setImageDisplaySize, setLogin, SetManagementButtonType, setSetManagementButtonType } from '../../slices/settingsSlice';
+import { fetchManagedSets, fetchWorkingSet, selectManagedSets, selectWorkingSetId, setWorkingSetId } from '../../slices/setSlice';
+import { switchScreen } from '../../slices/viewSlice';
+import styles from './Settings.module.css';
 
 export default function Settings() {
   const [username, setLocalUsername] = useState('');

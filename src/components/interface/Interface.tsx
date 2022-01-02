@@ -21,10 +21,10 @@ export function Interface() {
   const keydownHandler = useCallback((e: KeyboardEvent) => {
     if (e.repeat) return;
     switch (e.key) {
-      case "ArrowLeft":
+      case 'ArrowLeft':
         prevSlide();
         return;
-      case "ArrowRight":
+      case 'ArrowRight':
         nextSlide();
         return;
       default: return;
@@ -32,8 +32,8 @@ export function Interface() {
   }, [nextSlide, prevSlide]);
 
   useEffect(() => {
-    window.addEventListener("keydown", keydownHandler, true);
-    return () => window.removeEventListener("keydown", keydownHandler, true);
+    window.addEventListener('keydown', keydownHandler, true);
+    return () => window.removeEventListener('keydown', keydownHandler, true);
   }, [keydownHandler]);
 
   return (

@@ -10,7 +10,7 @@ export interface Post {
   locked_tags: string[];
   change_seq: number;
   flags: PostFlags;
-  rating: "s" | "q" | "e";
+  rating: 's' | 'q' | 'e';
   fav_count: number;
   sources: string[];
   pools: number;
@@ -48,8 +48,8 @@ export interface PostSample {
 }
 
 export interface PostSampleAlternates {
-  "720p"?: PostSampleAlternate;
-  "480p"?: PostSampleAlternate;
+  '720p'?: PostSampleAlternate;
+  '480p'?: PostSampleAlternate;
   original?: PostSampleAlternate;
 }
 

@@ -1,11 +1,11 @@
-import axios from "axios";
-import rateLimit from "axios-rate-limit";
-import { readAPIKey, readUsername } from "../../slices/settingsSlice";
+import axios from 'axios';
+import rateLimit from 'axios-rate-limit';
+import { readAPIKey, readUsername } from '../../slices/settingsSlice';
 
 const USER_AGENT = "SanguineDerg's Slideshow/1.0 (by SanguineDerg on e621)";
 
 const _axios = axios.create({
-  baseURL: "https://e621.net/",
+  baseURL: 'https://e621.net/',
 });
 
 _axios.interceptors.request.use(config => {

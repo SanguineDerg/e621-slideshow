@@ -1,8 +1,8 @@
-import { FormEvent, useCallback, useState } from "react";
-import { useAppDispatch } from "../../app/hooks";
-import { startSearchAndFetch } from "../../slices/postsSlice";
-import { switchScreen } from "../../slices/viewSlice";
-import styles from "./Search.module.css";
+import { FormEvent, useCallback, useState } from 'react';
+import { useAppDispatch } from '../../app/hooks';
+import { startSearchAndFetch } from '../../slices/postsSlice';
+import { switchScreen } from '../../slices/viewSlice';
+import styles from './Search.module.css';
 
 export default function Search() {
   const [tags, setTags] = useState('');
