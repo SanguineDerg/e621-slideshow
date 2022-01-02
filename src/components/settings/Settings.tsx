@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { ImageDisplaySize, selectImageDisplaySize, selectSetManagementButtonType, selectUsername, setImageDisplaySize, setLogin, SetManagementButtonType, setSetManagementButtonType } from "../../slices/settingsSlice";
 import { fetchManagedSets, fetchWorkingSet, selectManagedSets, selectWorkingSetId, setWorkingSetId } from "../../slices/setSlice";
@@ -17,16 +17,16 @@ export default function Settings() {
   
   const dispatch = useAppDispatch();
 
-  const saveLogin = () => {
+  const saveLogin = useCallback(() => {
     dispatch(setLogin({username: username, apiKey: apiKey}));
     setLocalUsername('');
     setLocalAPIKey('');
-  }
+  }, [username, apiKey]);
 
-  const close = () => {
+  const close = useCallback(() => {
     dispatch(fetchWorkingSet());
     dispatch(switchScreen('search'));
-  }
+  }, []);
 
   return (
     <div className={styles.settingsContainer}>

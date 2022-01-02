@@ -1,4 +1,4 @@
-import { FormEvent, useState } from "react";
+import { FormEvent, useCallback, useState } from "react";
 import { useAppDispatch } from "../../app/hooks";
 import { startSearchAndFetch } from "../../slices/postsSlice";
 import { switchScreen } from "../../slices/viewSlice";
@@ -8,23 +8,23 @@ export default function Search() {
   const [tags, setTags] = useState('');
   const dispatch = useAppDispatch();
 
-  const submit = (e: FormEvent) => {
+  const submit = useCallback((e: FormEvent) => {
     dispatch(startSearchAndFetch(tags));
     dispatch(switchScreen('slideshow'));
     e.preventDefault();
-  }
+  }, [tags]);
 
-  const openSettings = () => {
+  const openSettings = useCallback(() => {
     dispatch(switchScreen('settings'));
-  }
+  }, []);
 
-  const openAbout = () => {
+  const openAbout = useCallback(() => {
     dispatch(switchScreen('about'));
-  }
+  }, []);
 
-  const close = () => {
+  const close = useCallback(() => {
     dispatch(switchScreen('slideshow'));
-  }
+  }, []);
 
   return (
     <div className={styles.searchContainer}>

@@ -87,17 +87,17 @@ export default function ManageSetButton() {
     window.addEventListener("keydown", keydownHandler, true);
     return () => window.removeEventListener("keydown", keydownHandler, true);
   }, [keydownHandler]);
-  
-  if (currentPostId === null || workingSet === null) return null;
 
-  const handleClick = () => {
-    if (updateSetState === 'working') return;
+  const handleClick = useCallback(() => {
+    if (updateSetState === 'working' || currentPostId === null) return;
     if (isPostInSet) {
       dispatch(removeCurrentPostFromSet(currentPostId));
     } else {
       dispatch(addCurrentPostToSet(currentPostId));
     }
-  }
+  }, []);
+  
+  if (currentPostId === null || workingSet === null) return null;
 
   return (
     <button className={className} onClick={handleClick} style={{backgroundImage: `url("${process.env.PUBLIC_URL}/buttons/${icon}.svg")`}}>
