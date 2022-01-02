@@ -71,6 +71,9 @@ export const settingsSlice = createSlice({
       state = initialState;
       writeUsername(initialState.username);
       writeAPIKey(initialState.api_key);
+      writeImageDisplaySize(initialState.image_display_size);
+      writeVideoDisplaySize(initialState.video_display_size);
+      writeVideoDisplayType(initialState.video_display_type);
     },
     setLogin: (state, action: PayloadAction<{username: string, apiKey: string}>) => {
       state.username = action.payload.username;
