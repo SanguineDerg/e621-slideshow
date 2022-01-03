@@ -60,8 +60,8 @@ export const postsSlice = createSlice({
       state.fetch_page = 1;
       state.fetch_status = 'idle';
       state.fetch_id = '';
-      state.fetch_error = '';
-      state.fetch_error_hint = '';
+      state.fetch_error = null;
+      state.fetch_error_hint = null;
       state.slideshow_index = 0;
     },
     startSearch: (state, action: PayloadAction<string>) => {
@@ -70,8 +70,8 @@ export const postsSlice = createSlice({
       state.fetch_page = 1;
       state.fetch_status = 'idle';
       state.fetch_id = '';
-      state.fetch_error = '';
-      state.fetch_error_hint = '';
+      state.fetch_error = null;
+      state.fetch_error_hint = null;
       state.slideshow_index = 0;
     },
     previousSlide: (state) => {
@@ -94,8 +94,8 @@ export const postsSlice = createSlice({
       .addCase(fetchPosts.fulfilled, (state, action) => {
         // Check if the fetch was cancelled
         if (action.meta.requestId !== state.fetch_id) return;
-        state.fetch_error = '';
-        state.fetch_error_hint = '';
+        state.fetch_error = null;
+        state.fetch_error_hint = null;
         const posts = action.payload;
         if (posts.length === 0) {
           state.fetch_status = 'finished';
