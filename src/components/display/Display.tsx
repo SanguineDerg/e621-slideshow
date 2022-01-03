@@ -1,12 +1,13 @@
 import { useSelector } from 'react-redux';
 import { getPostMediaType, getPostMediaURL } from '../../api/e621/posts';
-import { selectCurrentSlideshowPost, selectFetchError, selectFetchStatus } from '../../slices/postsSlice';
+import { selectCurrentSlideshowPost, selectFetchError, selectFetchErrorHint, selectFetchStatus } from '../../slices/postsSlice';
 import styles from './Display.module.css'
 
 export function Display() {
   const currentPost = useSelector(selectCurrentSlideshowPost);
   const status = useSelector(selectFetchStatus);
   const error = useSelector(selectFetchError);
+  const errorHint = useSelector(selectFetchErrorHint);
 
   const currentFiletype = currentPost !== null ? getPostMediaType(currentPost) : null;
 
@@ -25,7 +26,7 @@ export function Display() {
         <div className={styles.text}><span>Loading</span></div>
       )}
       {currentFiletype === null && error !== null && (
-        <div className={styles.text}><span>An error occurred: {error}</span></div>
+        <div className={styles.text}><span>An error occurred: {error}</span><br /><span>{errorHint}</span></div>
       )}
     </div>
   );

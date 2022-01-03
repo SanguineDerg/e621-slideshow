@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction, createAsyncThunk, createSelector } from '@reduxjs/toolkit';
-import { AxiosError } from 'axios';
+import axios, { AxiosError } from 'axios';
 import { Post } from '../api/e621/interfaces/posts';
 import PostAPI from '../api/e621/posts';
 import { RootState, AppThunk } from '../app/store';
@@ -13,6 +13,7 @@ export interface PostsState {
   fetch_status: 'idle' | 'loading' | 'failed' | 'finished';
   fetch_id: string;
   fetch_error: string | null;
+  fetch_error_hint: string | null;
   slideshow_index: number;
 }
 
@@ -24,6 +25,7 @@ const initialState: PostsState = {
   fetch_status: 'idle',
   fetch_id: '',
   fetch_error: null,
+  fetch_error_hint: null,
   slideshow_index: 0,
 };
 
@@ -58,6 +60,8 @@ export const postsSlice = createSlice({
       state.fetch_page = 1;
       state.fetch_status = 'idle';
       state.fetch_id = '';
+      state.fetch_error = '';
+      state.fetch_error_hint = '';
       state.slideshow_index = 0;
     },
     startSearch: (state, action: PayloadAction<string>) => {
@@ -66,6 +70,8 @@ export const postsSlice = createSlice({
       state.fetch_page = 1;
       state.fetch_status = 'idle';
       state.fetch_id = '';
+      state.fetch_error = '';
+      state.fetch_error_hint = '';
       state.slideshow_index = 0;
     },
     previousSlide: (state) => {
@@ -88,6 +94,8 @@ export const postsSlice = createSlice({
       .addCase(fetchPosts.fulfilled, (state, action) => {
         // Check if the fetch was cancelled
         if (action.meta.requestId !== state.fetch_id) return;
+        state.fetch_error = '';
+        state.fetch_error_hint = '';
         const posts = action.payload;
         if (posts.length === 0) {
           state.fetch_status = 'finished';
@@ -104,8 +112,21 @@ export const postsSlice = createSlice({
         }
       })
       .addCase(fetchPosts.rejected, (state, action) => {
-        state.fetch_error = `${action.payload}`;
         state.fetch_status = 'failed';
+        if (axios.isAxiosError(action.payload)) {
+          state.fetch_error = action.payload.message;
+          switch (action.payload.message) {
+            case 'Network Error':
+              state.fetch_error_hint = 'Your login credentials might be wrong or you might have lost connection to the internet';
+              break;
+            default:
+              state.fetch_error_hint = 'Unexpected error, please report it as a bug';
+              break;
+          }
+        } else {
+          state.fetch_error = `${action.payload}`;
+          state.fetch_error_hint = 'Unexpected error, please report it as a bug';
+        }
       });
   },
 });
@@ -118,6 +139,7 @@ export const selectFetchStatus = (state: RootState) => state.posts.fetch_status;
 export const selectFetchOrder = (state: RootState) => state.posts.fetch_order;
 export const selectPosts = (state: RootState) => state.posts.posts;
 export const selectFetchError = (state: RootState) => state.posts.fetch_error;
+export const selectFetchErrorHint = (state: RootState) => state.posts.fetch_error_hint;
 
 export const selectSlideshowIndex = (state: RootState) => state.posts.slideshow_index;
 
