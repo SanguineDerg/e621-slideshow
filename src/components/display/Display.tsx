@@ -17,16 +17,35 @@ export function Display() {
         <img className={styles.image} src={currentPost !== null ? (getPostMediaURL(currentPost)) : undefined} alt="" />
       )}
       {currentFiletype === 'video' && (
-        <div className={styles.text}><span>Video</span></div>
+        <div className={styles.text}>
+          <span>
+            Video
+          </span>
+        </div>
       )}
       {currentFiletype === 'flash' && (
-        <div className={styles.text}><span>Flash</span></div>
+        <div className={styles.text}>
+          <span>
+            Flash
+          </span>
+        </div>
       )}
       {currentFiletype === null && status === 'loading' && (
-        <div className={styles.text}><span>Loading</span></div>
+        <div className={styles.text}>
+          <span>
+            Loading
+          </span>
+        </div>
       )}
       {currentFiletype === null && error !== null && (
-        <div className={styles.text}><span>An error occurred: {error}</span><br /><span>{errorHint}</span></div>
+        <div className={styles.text}>
+          <span>
+            An error occurred: {error}
+          </span>
+          <span>
+            {errorHint}
+          </span>
+        </div>
       )}
     </div>
   );
