@@ -1,10 +1,12 @@
 import { useSelector } from 'react-redux';
 import { getPostMediaType, getPostMediaURL } from '../../api/e621/posts';
-import { selectCurrentSlideshowPost } from '../../slices/postsSlice';
+import { selectCurrentSlideshowPost, selectFetchStatus } from '../../slices/postsSlice';
 import styles from './Display.module.css'
 
 export function Display() {
   const currentPost = useSelector(selectCurrentSlideshowPost);
+  const status = useSelector(selectFetchStatus);
+  const error = useSelector(selectFetchError);
 
   const currentFiletype = currentPost !== null ? getPostMediaType(currentPost) : null;
 
@@ -18,6 +20,12 @@ export function Display() {
       )}
       {currentFiletype === 'flash' && (
         <div className={styles.text}><span>Flash</span></div>
+      )}
+      {currentFiletype === null && status === 'loading' && (
+        <div className={styles.text}><span>Loading</span></div>
+      )}
+      {currentFiletype === null && error !== null && (
+        <div className={styles.text}><span>An error occurred: {error}</span></div>
       )}
     </div>
   );

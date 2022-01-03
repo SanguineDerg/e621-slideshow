@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction, createAsyncThunk, createSelector } from '@reduxjs/toolkit';
+import { AxiosError } from 'axios';
 import { Post } from '../api/e621/interfaces/posts';
 import PostAPI from '../api/e621/posts';
 import { RootState, AppThunk } from '../app/store';
@@ -11,6 +12,7 @@ export interface PostsState {
   fetch_page: number;
   fetch_status: 'idle' | 'loading' | 'failed' | 'finished';
   fetch_id: string;
+  fetch_error: string | null;
   slideshow_index: number;
 }
 
@@ -21,21 +23,28 @@ const initialState: PostsState = {
   fetch_page: 1,
   fetch_status: 'idle',
   fetch_id: '',
+  fetch_error: null,
   slideshow_index: 0,
 };
 
 const fetchPosts = createAsyncThunk<
   Post[],
   void,
-  {state: RootState}
+  {
+    state: RootState,
+    rejectValue: Error | AxiosError,
+  }
 >(
   'posts/fetchPosts',
   async (_, thunkAPI) => {
-    const response = await PostAPI.getPosts({
+    return PostAPI.getPosts({
       tags: selectTags(thunkAPI.getState()),
       page: selectPage(thunkAPI.getState()),
+    }).then((response) => {
+      return response.data.posts;
+    }).catch((error: Error | AxiosError) => {
+      return thunkAPI.rejectWithValue(error);
     });
-    return response.data.posts;
   }
 );
 
@@ -93,6 +102,10 @@ export const postsSlice = createSlice({
             state.fetch_order.push(post.id);
           });
         }
+      })
+      .addCase(fetchPosts.rejected, (state, action) => {
+        state.fetch_error = `${action.payload}`;
+        state.fetch_status = 'failed';
       });
   },
 });
@@ -104,6 +117,7 @@ export const selectPage = (state: RootState) => state.posts.fetch_page;
 export const selectFetchStatus = (state: RootState) => state.posts.fetch_status;
 export const selectFetchOrder = (state: RootState) => state.posts.fetch_order;
 export const selectPosts = (state: RootState) => state.posts.posts;
+export const selectFetchError = (state: RootState) => state.posts.fetch_error;
 
 export const selectSlideshowIndex = (state: RootState) => state.posts.slideshow_index;
 
