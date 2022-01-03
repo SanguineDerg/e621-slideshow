@@ -1,6 +1,6 @@
 import { useSelector } from 'react-redux';
 import { getPostMediaType, getPostMediaURL } from '../../api/e621/posts';
-import { selectCurrentSlideshowPost, selectFetchStatus } from '../../slices/postsSlice';
+import { selectCurrentSlideshowPost, selectFetchError, selectFetchStatus } from '../../slices/postsSlice';
 import styles from './Display.module.css'
 
 export function Display() {
