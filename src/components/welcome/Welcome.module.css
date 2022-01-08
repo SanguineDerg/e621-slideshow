@@ -1,0 +1,20 @@
+.welcomeContainer {
+  margin: 3em 2em;
+  color: #eeeeee;
+  font-family: Verdana, sans-serif;
+}
+
+.welcomeBody {
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.8em;
+  font-size: 1.5em;
+  max-width: 500px;
+}
+
+.welcomeBody br {
+  display: block;
+  margin: 0.5em 0;
+}
