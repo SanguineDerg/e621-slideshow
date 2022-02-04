@@ -1,0 +1,12 @@
+.galleryContainer {
+  margin: 3em 2em;
+  color: #eeeeee;
+  font-family: Verdana, sans-serif;
+}
+
+.galleryPreviews {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}

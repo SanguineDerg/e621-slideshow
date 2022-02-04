@@ -1,20 +1,25 @@
-import { useSelector } from 'react-redux';
-import { getPostMediaType, getPostMediaURL } from '../../api/e621/posts';
+import PostUtils from '../../api/e621/utils/posts';
+import { useAppSelector } from '../../app/hooks';
 import { selectCurrentSlideshowPost, selectFetchError, selectFetchErrorHint, selectFetchStatus } from '../../slices/postsSlice';
+import { selectImageDisplaySize } from '../../slices/settingsSlice';
 import styles from './Display.module.css'
 
 export function Display() {
-  const currentPost = useSelector(selectCurrentSlideshowPost);
-  const status = useSelector(selectFetchStatus);
-  const error = useSelector(selectFetchError);
-  const errorHint = useSelector(selectFetchErrorHint);
+  const currentPost = useAppSelector(selectCurrentSlideshowPost);
 
-  const currentFiletype = currentPost !== null ? getPostMediaType(currentPost) : null;
+  const imageSizePreference = useAppSelector(selectImageDisplaySize);
+  const md5Bypass = true;  // TODO add setting
+
+  const status = useAppSelector(selectFetchStatus);
+  const error = useAppSelector(selectFetchError);
+  const errorHint = useAppSelector(selectFetchErrorHint);
+
+  const currentFiletype = currentPost !== null ? PostUtils.getMediaType(currentPost) : null;
 
   return (
     <div className={styles.displayContainer}>
       {currentFiletype === 'image' && (
-        <img className={styles.image} src={currentPost !== null ? (getPostMediaURL(currentPost)) : undefined} alt="" />
+        <img className={styles.image} src={currentPost !== null ? (PostUtils.getImageURL(currentPost, imageSizePreference, md5Bypass)) : undefined} alt="" />
       )}
       {currentFiletype === 'video' && (
         <div className={styles.text}>

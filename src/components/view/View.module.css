@@ -4,6 +4,7 @@
   width: 100vw;
   opacity: 0;
   z-index: -100;
+  pointer-events: none;
 }
 
 .hidden {
@@ -15,4 +16,8 @@
 .visible {
   opacity: 1;
   z-index: 0;
+}
+
+.view > * {
+  pointer-events: all;
 }

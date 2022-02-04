@@ -41,7 +41,7 @@ export function Interface() {
       <div className={styles.mainControls}>
         <div className={styles.nextSlide} onClick={nextSlide}>Next</div>
         <div className={styles.previousSlide} onClick={prevSlide}>Previous</div>
-        <div className={styles.exitSlideshow} onClick={() => dispatch(switchScreen('search'))}>Close</div>
+        <div className={styles.exitSlideshow} onClick={() => dispatch(switchScreen('gallery'))}>Close</div>
         <a className={styles.viewSource} target="_blank" rel="noopener noreferrer" {...(currentPost === null ? {onClick: () => {}} : {href: `https://e621.net/posts/${currentPost.id}`})}>Link</a>
       </div>
       <div className={styles.extraControls}>

@@ -10,7 +10,7 @@ export default function Search() {
 
   const submit = useCallback((e: FormEvent) => {
     dispatch(startSearchAndFetch(tags));
-    dispatch(switchScreen('slideshow'));
+    dispatch(switchScreen('gallery'));
     e.preventDefault();
   }, [dispatch, tags]);
 
@@ -23,7 +23,7 @@ export default function Search() {
   }, [dispatch]);
 
   const close = useCallback(() => {
-    dispatch(switchScreen('slideshow'));
+    dispatch(switchScreen('gallery'));
   }, [dispatch]);
 
   return (

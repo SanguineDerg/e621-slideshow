@@ -3,6 +3,7 @@ import './App.css';
 import { useAppSelector } from './app/hooks';
 import About from './components/about/About';
 import Cache from './components/cache/Cache';
+import { Gallery } from './components/gallery/Gallery';
 import Search from './components/search/Search';
 import Settings from './components/settings/Settings';
 import { Slideshow } from './components/slideshow/Slideshow';
@@ -23,6 +24,7 @@ function App() {
         <>
           <Cache />
           <View disabled={screen !== 'slideshow'} ><Slideshow /></View>
+          <View disabled={screen !== 'gallery'} ><Gallery /></View>
           <View visible={screen === 'search'} ><Search /></View>
           <View visible={screen === 'settings'} ><Settings /></View>
           <View visible={screen === 'about'} ><About /></View>

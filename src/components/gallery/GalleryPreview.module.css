@@ -1,0 +1,23 @@
+.preview {
+  height: 150px;
+  width: 150px;
+  box-sizing: content-box;
+  border: 1em solid transparent;
+  pointer-events: all;
+  background-color: transparent !important;
+}
+
+.preview a {
+  height: 100%;
+  width: 100%;
+}
+
+.preview.selected {
+  border-color: #8080f0;
+}
+
+.previewImage {
+  max-height: 100%;
+  max-width: 100%;
+  margin: auto;
+}

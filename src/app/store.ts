@@ -1,4 +1,4 @@
-import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
+import { configureStore, ThunkAction, ThunkDispatch, Action } from '@reduxjs/toolkit';
 import postsReducer from '../slices/postsSlice';
 import settingsSlice, { getLocalStorageSettings } from '../slices/settingsSlice';
 import setSlice, { getLocalStorageSets } from '../slices/setSlice';
@@ -26,5 +26,10 @@ export type AppThunk<ReturnType = void> = ThunkAction<
   ReturnType,
   RootState,
   unknown,
+  Action<string>
+>;
+export type AppThunkDispatch<ExtraThunkArg = unknown> = ThunkDispatch<
+  RootState,
+  ExtraThunkArg,
   Action<string>
 >;
