@@ -1,0 +1,6 @@
+services:
+  dev-container:
+    image: node:18
+    command: sleep infinity
+    volumes:
+      - ..:/workspace:cached
