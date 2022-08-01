@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../app/store';
 
-type ViewScreen = 'search' | 'gallery' | 'slideshow' | 'settings' | 'about';
+type ViewScreen = 'search' | 'slideshow' | 'settings' | 'about';
 
 export interface ViewState {
   screen: ViewScreen;

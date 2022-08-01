@@ -27,13 +27,11 @@ export interface Post {
 export interface PostFile {
   width: number;
   height: number;
-  ext: PostFileExtension;
+  ext: 'jpg' | 'png' | 'gif' | 'webm' | 'swf';
   size: number;
   md5: string;
   url: string;
 }
-
-export type PostFileExtension = 'jpg' | 'png' | 'gif' | 'webm' | 'swf';
 
 export interface PostPreview {
   width: number;

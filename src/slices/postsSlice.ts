@@ -1,8 +1,8 @@
-import { createSlice, PayloadAction, createAsyncThunk, createSelector, ThunkDispatch } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction, createAsyncThunk, createSelector } from '@reduxjs/toolkit';
 import axios, { AxiosError } from 'axios';
 import { Post } from '../api/e621/interfaces/posts';
 import PostAPI from '../api/e621/posts';
-import { RootState, AppThunk, AppThunkDispatch } from '../app/store';
+import { RootState, AppThunk } from '../app/store';
 import { resetUpdateSetStatus, selectWorkingSet } from './setSlice';
 
 export interface PostsState {
@@ -15,7 +15,6 @@ export interface PostsState {
   fetch_error: string | null;
   fetch_error_hint: string | null;
   slideshow_index: number;
-  gallery_page: number;
 }
 
 const initialState: PostsState = {
@@ -28,11 +27,7 @@ const initialState: PostsState = {
   fetch_error: null,
   fetch_error_hint: null,
   slideshow_index: 0,
-  gallery_page: 0,
 };
-
-// TODO make configurable in settings
-const PAGE_SIZE = 30;
 
 const fetchPosts = createAsyncThunk<
   Post[],
@@ -68,7 +63,6 @@ export const postsSlice = createSlice({
       state.fetch_error = null;
       state.fetch_error_hint = null;
       state.slideshow_index = 0;
-      state.gallery_page = 0;
     },
     startSearch: (state, action: PayloadAction<string>) => {
       state.fetch_order = [];
@@ -79,39 +73,15 @@ export const postsSlice = createSlice({
       state.fetch_error = null;
       state.fetch_error_hint = null;
       state.slideshow_index = 0;
-      state.gallery_page = 0;
     },
     previousSlide: (state) => {
       if (state.slideshow_index !== 0) {
         state.slideshow_index -= 1;
-        state.gallery_page = Math.floor(state.slideshow_index / PAGE_SIZE);
       }
     },
     nextSlide: (state) => {
       if (state.slideshow_index < state.fetch_order.length - 1) {
         state.slideshow_index += 1;
-        state.gallery_page = Math.floor(state.slideshow_index / PAGE_SIZE);
-      }
-    },
-    jumpToSlide: (state, action: PayloadAction<number>) => {
-      if (action.payload >= 0 && action.payload < state.fetch_order.length) {
-        state.slideshow_index = action.payload;
-        state.gallery_page = Math.floor(state.slideshow_index / PAGE_SIZE);
-      }
-    },
-    previousPage: (state) => {
-      if (state.gallery_page !== 0) {
-        state.gallery_page -= 1;
-      }
-    },
-    nextPage: (state) => {
-      if (state.gallery_page < Math.floor(state.fetch_order.length / PAGE_SIZE) - 1) {
-        state.gallery_page += 1;
-      }
-    },
-    jumpToPage: (state, action: PayloadAction<number>) => {
-      if (action.payload >= 0 && action.payload < Math.floor(state.fetch_order.length / PAGE_SIZE)) {
-        state.gallery_page = action.payload;
       }
     },
   },
@@ -161,7 +131,7 @@ export const postsSlice = createSlice({
   },
 });
 
-export const { clear, startSearch, previousSlide, nextSlide, jumpToSlide, nextPage, previousPage, jumpToPage } = postsSlice.actions;
+export const { clear, startSearch, previousSlide, nextSlide } = postsSlice.actions;
 
 export const selectTags = (state: RootState) => state.posts.fetch_tags;
 export const selectPage = (state: RootState) => state.posts.fetch_page;
@@ -173,26 +143,10 @@ export const selectFetchErrorHint = (state: RootState) => state.posts.fetch_erro
 
 export const selectSlideshowIndex = (state: RootState) => state.posts.slideshow_index;
 
-export const selectGalleryPage = (state: RootState) => state.posts.gallery_page;
-export const selectGalleryPageSize = (state: RootState) => PAGE_SIZE;  // TODO make configurable in settings
-
-export const selectGalleryPageCount = createSelector([selectGalleryPageSize, selectFetchOrder], (pageSize, order) => {
-  return Math.ceil(order.length / pageSize); 
-});
-
 export const selectCacheIndices = createSelector([selectSlideshowIndex, selectFetchOrder], (index, order) => {
   // TODO add settings for cache size
   const indices = Array.from({length: 6}, (_, i) => i + index - 2);
   return indices.filter((i) => i >= 0 && i < order.length);
-});
-
-export const selectGalleryIndexOffset = createSelector([selectGalleryPage, selectGalleryPageSize], (page, pageSize) => {
-  return (page * pageSize);
-});
-
-export const selectGalleryIndices = createSelector([selectFetchOrder, selectGalleryIndexOffset, selectGalleryPageSize], (order, offset, pageSize) => {
-  const indices = Array.from({length: pageSize}, (_, i) => i + offset);
-  return indices.filter((i) => i < order.length);
 });
 
 export const selectCurrentSlideshowPost = createSelector([selectPosts, selectFetchOrder, selectSlideshowIndex], (posts, order, index) => {
@@ -209,11 +163,6 @@ export const selectIsCurrentPostInSet = createSelector([selectCurrentSlideshowPo
 });
 
 export const selectCachePosts = createSelector([selectPosts, selectFetchOrder, selectCacheIndices], (posts, order, indices) => {
-  if (order.length === 0) return [];
-  return indices.map(index => posts[order[index]]);
-});
-
-export const selectCurrentGalleryPosts = createSelector([selectPosts, selectFetchOrder, selectGalleryIndices], (posts, order, indices) => {
   if (order.length === 0) return [];
   return indices.map(index => posts[order[index]]);
 });
@@ -243,7 +192,11 @@ export const nextSlideAndPrefetch = (): AppThunk => (
 ) => {
   dispatch(nextSlide());
   dispatch(resetUpdateSetStatus());
-  _prefetch(dispatch, getState);
+  const index = selectSlideshowIndex(getState());
+  const order = selectFetchOrder(getState());
+  if (index >= order.length - 5) {
+    dispatch(tryFetchPosts());
+  }
 };
 
 export const previousSlideAndPrefetch = (): AppThunk => (
@@ -252,16 +205,9 @@ export const previousSlideAndPrefetch = (): AppThunk => (
 ) => {
   dispatch(previousSlide());
   dispatch(resetUpdateSetStatus());
-  _prefetch(dispatch, getState);
-};
-
-export const _prefetch = (
-  dispatch: AppThunkDispatch,
-  getState: () => RootState,
-) => {
-  const page = selectGalleryPage(getState());
-  const pageCount = selectGalleryPageSize(getState());
-  if (page >= pageCount - 1) {
+  const index = selectSlideshowIndex(getState());
+  const order = selectFetchOrder(getState());
+  if (index >= order.length - 5) {
     dispatch(tryFetchPosts());
   }
 };

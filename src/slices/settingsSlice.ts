@@ -3,7 +3,7 @@ import { readLocalStorage, writeLocalStorage } from '../app/localStorage';
 import { RootState } from '../app/store';
 
 export type ImageDisplaySize = 'full' | 'sample';
-export type VideoDisplaySize = 'original' | '720p' | '480p';
+export type VideoDisplaySize = 'full' | '720p' | '480p';
 export type VideoDisplayType = 'webm' | 'mp4';
 
 export type SetManagementButtonType = 'desktop' | 'mobile';
