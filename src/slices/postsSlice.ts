@@ -74,6 +74,9 @@ export const postsSlice = createSlice({
       state.fetch_error_hint = null;
       state.slideshow_index = 0;
     },
+    firstSlide: (state) => {
+      state.slideshow_index = 0;
+    },
     previousSlide: (state) => {
       if (state.slideshow_index !== 0) {
         state.slideshow_index -= 1;
@@ -149,6 +152,10 @@ export const selectCacheIndices = createSelector([selectSlideshowIndex, selectFe
   return indices.filter((i) => i >= 0 && i < order.length);
 });
 
+export const selectSlideshowLength = createSelector([selectFetchOrder], (order) => {
+  return order.length;
+});
+
 export const selectCurrentSlideshowPost = createSelector([selectPosts, selectFetchOrder, selectSlideshowIndex], (posts, order, index) => {
   if (order.length === 0) return null;
   return posts[order[index]];
@@ -183,6 +190,14 @@ export const startSearchAndFetch = (tags: string): AppThunk => (
 ) => {
   dispatch(startSearch(tags));
   dispatch(fetchPosts());
+  dispatch(resetUpdateSetStatus());
+};
+
+export const firstSlide = (): AppThunk => (
+  dispatch,
+  getState
+) => {
+  dispatch(postsSlice.actions.firstSlide());
   dispatch(resetUpdateSetStatus());
 };
 

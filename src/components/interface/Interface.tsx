@@ -4,6 +4,7 @@ import { nextSlideAndPrefetch, previousSlideAndPrefetch, selectCurrentSlideshowP
 import { switchScreen } from '../../slices/viewSlice';
 import styles from './Interface.module.css';
 import ManageSetButton from './ManageSetButton';
+import AutoplayButton from './AutoplayButton';
 
 export function Interface() {
   const dispatch = useAppDispatch();
@@ -45,6 +46,7 @@ export function Interface() {
         <a className={styles.viewSource} target="_blank" rel="noopener noreferrer" {...(currentPost === null ? {onClick: () => {}} : {href: `https://e621.net/posts/${currentPost.id}`})}>Link</a>
       </div>
       <div className={styles.extraControls}>
+        <AutoplayButton />
         <ManageSetButton />
       </div>
     </div>

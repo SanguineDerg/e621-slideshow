@@ -22,6 +22,8 @@ export interface SettingsState {
   videoDisplaySize: VideoDisplaySize;
   videoDisplayType: VideoDisplayType;
   setManagementButtonType: SetManagementButtonType;
+  autoplayDelay: number;
+  autoplayLoop: boolean;
 }
 
 const initialState: SettingsState = {
@@ -31,6 +33,8 @@ const initialState: SettingsState = {
   videoDisplaySize: '720p',
   videoDisplayType: 'mp4',
   setManagementButtonType: 'mobile',
+  autoplayDelay: 5,
+  autoplayLoop: true,
 };
 
 export const getLocalStorageSettings = () => {
@@ -66,6 +70,10 @@ export const getLocalStorageSettings = () => {
   const videoDisplaySize = localStorage.getItem('settings.video_display_size') ?? initialState.videoDisplaySize;
   const videoDisplayType = localStorage.getItem('settings.video_display_type') ?? initialState.videoDisplayType;
   const setManagementButtonType = localStorage.getItem('settings.set_management_button_type') ?? initialState.setManagementButtonType;
+  const autoplayDelay = localStorage.getItem('settings.autoplay_delay');
+  const loadedAutoplayDelay = autoplayDelay !== null ? JSON.parse(autoplayDelay) as number : initialState.autoplayDelay;
+  const autoplayLoop = localStorage.getItem('settings.autoplay_loop');
+  const loadedAutoplayLoop = autoplayLoop !== null ? JSON.parse(autoplayLoop) as boolean : initialState.autoplayLoop;
 
   const state = {
     accounts: loadedAccounts,
@@ -74,6 +82,8 @@ export const getLocalStorageSettings = () => {
     videoDisplaySize: videoDisplaySize,
     videoDisplayType: videoDisplayType,
     setManagementButtonType: setManagementButtonType,
+    autoplayDelay: loadedAutoplayDelay,
+    autoplayLoop: loadedAutoplayLoop,
   } as SettingsState;
 
   saveState(state);
@@ -102,6 +112,8 @@ function saveState(state: SettingsState) {
   localStorage.setItem("settings.video_display_size", state.videoDisplaySize);
   localStorage.setItem("settings.video_display_type", state.videoDisplayType);
   localStorage.setItem("settings.set_management_button_type", state.setManagementButtonType);
+  localStorage.setItem("settings.autoplay_delay", JSON.stringify(state.autoplayDelay));
+  localStorage.setItem("settings.autoplay_loop", JSON.stringify(state.autoplayLoop));
 }
 
 export const settingsSlice = createSlice({
@@ -150,10 +162,18 @@ export const settingsSlice = createSlice({
       state.setManagementButtonType = action.payload;
       saveState(state);
     },
+    setAutoplayDelay: (state, action: PayloadAction<number>) => {
+      state.autoplayDelay = action.payload;
+      saveState(state);
+    },
+    setAutoplayLoop: (state, action: PayloadAction<boolean>) => {
+      state.autoplayLoop = action.payload;
+      saveState(state);
+    },
   },
 });
 
-export const { clear, addAccount, selectAccount, removeAccount, setImageDisplaySize, setVideoDisplaySize, setVideoDisplayType, setSetManagementButtonType } = settingsSlice.actions;
+export const { clear, addAccount, selectAccount, removeAccount, setImageDisplaySize, setVideoDisplaySize, setVideoDisplayType, setSetManagementButtonType, setAutoplayDelay, setAutoplayLoop } = settingsSlice.actions;
 
 // Direct local storage accessors
 export const readUser = () => {
@@ -163,7 +183,7 @@ export const readUser = () => {
   if (currentUid === null) return null;
   const site = localStorage.getItem(`settings.accounts.${currentUid}.site`)
   const username = localStorage.getItem(`settings.accounts.${currentUid}.username`)
-  const apiKey = localStorage.getItem(`settings.accounts.${currentUid}.apiKey`)
+  const apiKey = localStorage.getItem(`settings.accounts.${currentUid}.api_key`)
   if (site !== null && username !== null && apiKey !== null) {
     return {
       site: site,
@@ -178,6 +198,16 @@ export const readImageDisplaySize = () => localStorage.getItem('settings.image_d
 export const readVideoDisplaySize = () => localStorage.getItem('settings.video_display_size') ?? initialState.videoDisplaySize;
 export const readVideoDisplayType = () => localStorage.getItem('settings.video_display_type') ?? initialState.videoDisplayType;
 export const readSetManagementButtonType = () => localStorage.getItem('settings.set_management_button_type') ?? initialState.setManagementButtonType;
+export const readAutoplayDelay = () => {
+  const autoplayDelay = localStorage.getItem('settings.autoplay_delay')
+  if (autoplayDelay === null) return initialState.autoplayDelay;
+  return JSON.parse(autoplayDelay) as number;
+}
+export const readAutoplayLoop = () => {
+  const autoplayLoop = localStorage.getItem('settings.autoplay_loop')
+  if (autoplayLoop === null) return initialState.autoplayLoop;
+  return JSON.parse(autoplayLoop) as number;
+}
 
 export const selectAllAccounts = (state: RootState) => state.settings.accounts;
 export const selectSelectedAccountId = (state: RootState) => state.settings.selectedAccount;
@@ -185,6 +215,8 @@ export const selectImageDisplaySize = (state: RootState) => state.settings.image
 export const selectVideoDisplaySize = (state: RootState) => state.settings.videoDisplaySize;
 export const selectVideoDisplayType = (state: RootState) => state.settings.videoDisplayType;
 export const selectSetManagementButtonType = (state: RootState) => state.settings.setManagementButtonType;
+export const selectAutoplayDelay = (state: RootState) => state.settings.autoplayDelay;
+export const selectAutoplayLoop = (state: RootState) => state.settings.autoplayLoop;
 
 export const selectSelectedAccount = createSelector([selectAllAccounts, selectSelectedAccountId], (accounts, uid) => (uid !== null && accounts.hasOwnProperty(uid)) ? accounts[uid] : null);
 export const selectCurrentSite = createSelector([selectSelectedAccount], (account) => account !== null ? account.site : DEFAULT_SITE);
