@@ -1,15 +1,18 @@
 import { useCallback, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { ImageDisplaySize, selectImageDisplaySize, selectSetManagementButtonType, selectUsername, setImageDisplaySize, setLogin, SetManagementButtonType, setSetManagementButtonType } from '../../slices/settingsSlice';
+import { clear } from '../../slices/postsSlice';
+import { ImageDisplaySize, selectImageDisplaySize, selectSelectedAccount, selectSetManagementButtonType, setImageDisplaySize, SetManagementButtonType, setSetManagementButtonType, DEFAULT_SITE, addAccount, selectAccount, removeAccount, selectSelectedAccountId, selectAllAccounts, UserAccount } from '../../slices/settingsSlice';
 import { fetchManagedSets, fetchWorkingSet, selectManagedSets, selectWorkingSetId, setWorkingSetId } from '../../slices/setSlice';
 import { switchScreen } from '../../slices/viewSlice';
 import styles from './Settings.module.css';
 
 export default function Settings() {
+  const [site, setLocalSite] = useState(DEFAULT_SITE);
   const [username, setLocalUsername] = useState('');
   const [apiKey, setLocalAPIKey] = useState('');
 
-  const currentUsername = useAppSelector(selectUsername);
+  const allAccounts = useAppSelector(selectAllAccounts);
+  const selectedAccountId = useAppSelector(selectSelectedAccountId);
   const currentImageDisplaySize = useAppSelector(selectImageDisplaySize);
   const managedSets = useAppSelector(selectManagedSets);
   const workingSetId = useAppSelector(selectWorkingSetId);
@@ -17,11 +20,45 @@ export default function Settings() {
   
   const dispatch = useAppDispatch();
 
-  const saveLogin = useCallback(() => {
-    dispatch(setLogin({username: username, apiKey: apiKey}));
+  const anonymousAccountButton = () => (
+    <button
+      className={selectedAccountId === null || !allAccounts.hasOwnProperty(selectedAccountId) ? [styles.account, styles.selectedAccount].join(" ") : styles.account}
+      type="button" onClick={() => saveSelectAccount(null)}
+    >
+      <span>anonymous @ {DEFAULT_SITE}</span>
+    </button>
+  );
+  const accountButton = (uid: string, user: UserAccount) => (
+    <button
+      className={selectedAccountId === uid ? [styles.account, styles.selectedAccount].join(" ") : styles.account}
+      type="button" onClick={() => saveSelectAccount(uid)}
+    >
+      <span>{user.username} @ {user.site}</span>
+    </button>
+  );
+
+  const saveAddAccount = useCallback(() => {
+    dispatch(addAccount({
+      site: site,
+      username: username,
+      apiKey: apiKey,
+    }));
+    setLocalSite(DEFAULT_SITE);
     setLocalUsername('');
     setLocalAPIKey('');
   }, [dispatch, username, apiKey]);
+
+  const saveSelectAccount = useCallback((uid: string | null) => {
+    dispatch(selectAccount(uid));
+    dispatch(clear());
+  }, [dispatch]);
+
+  const removeSelectedAccount = useCallback(() => {
+    if (selectedAccountId !== null) {
+      dispatch(removeAccount(selectedAccountId));
+    }
+    dispatch(clear());
+  }, [dispatch, selectedAccountId]);
 
   const close = useCallback(() => {
     dispatch(fetchWorkingSet());
@@ -36,10 +73,17 @@ export default function Settings() {
 
       <fieldset>
         <legend>Login</legend>
-        <span>{currentUsername !== '' ? `Logged in as ${currentUsername}` : 'Not logged in'}</span>
+        {anonymousAccountButton()}
+        {Object.entries(allAccounts).map(([uid, user]) => accountButton(uid, user))}
+        <button type="button" onClick={removeSelectedAccount}>Remove Selected Account</button>
+      </fieldset>
+
+      <fieldset>
+        <legend>Add Login</legend>
+        <input value={site} onChange={e => setLocalSite(e.target.value)} type="text" />
         <input value={username} onChange={e => setLocalUsername(e.target.value)} type="text" />
         <input value={apiKey} onChange={e => setLocalAPIKey(e.target.value)} type="password" />
-        <button type="button" onClick={saveLogin}>Save Login</button>
+        <button type="button" onClick={saveAddAccount}>Save Login</button>
       </fieldset>
       
       <fieldset>

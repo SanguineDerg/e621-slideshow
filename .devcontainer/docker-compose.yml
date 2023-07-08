@@ -4,3 +4,4 @@ services:
     command: sleep infinity
     volumes:
       - ..:/workspace:cached
+      - ~/.ssh:/home/node/.ssh:ro
