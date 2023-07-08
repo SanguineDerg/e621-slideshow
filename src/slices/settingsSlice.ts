@@ -35,18 +35,18 @@ const initialState: SettingsState = {
 
 export const getLocalStorageSettings = () => {
   // Accounts
-  //   accounts = '["uid1"]'
-  //   accounts:uid1:site = 'https://e621.net'
-  //   accounts:uid1:username = 'username'
-  //   accounts:uid1:apiKey = 'api_key'
+  //   settings.accounts = '["uid1"]'
+  //   settings.accounts.uid1.site = 'https://e621.net'
+  //   settings.accounts.uid1.username = 'username'
+  //   settings.accounts.uid1.api_key = 'api_key'
   const loadedAccounts: {[uid: string]: UserAccount} = {}
-  const accounts = localStorage.getItem("accounts")
+  const accounts = localStorage.getItem("settings.accounts")
   if (accounts !== null) {
     const uidList: string[] = JSON.parse(accounts)
     for (const uid of uidList) {
-      const site = localStorage.getItem(`accounts:${uid}:site`)
-      const username = localStorage.getItem(`accounts:${uid}:username`)
-      const apiKey = localStorage.getItem(`accounts:${uid}:apiKey`)
+      const site = localStorage.getItem(`settings.accounts.${uid}.site`)
+      const username = localStorage.getItem(`settings.accounts.${uid}.username`)
+      const apiKey = localStorage.getItem(`settings.accounts.${uid}.api_key`)
       if (site !== null && username !== null && apiKey !== null) {
         loadedAccounts[uid] = {
           site: site,
@@ -57,8 +57,8 @@ export const getLocalStorageSettings = () => {
     }
   }
   // SelectedAccount
-  //   selectedAccount = '"uid1"'
-  const selectedAccount = localStorage.getItem("selected_account");
+  //   settings.selected_account = '"uid1"'
+  const selectedAccount = localStorage.getItem("settings.selected_account");
   const loadedSelectedAccount = selectedAccount !== null ? JSON.parse(selectedAccount) as string | null : null;
 
   // Other state
@@ -82,19 +82,19 @@ export const getLocalStorageSettings = () => {
 
 function saveState(state: SettingsState) {
   // Accounts
-  //   accounts = '["uid1"]'
-  //   accounts:uid1:site = 'https://e621.net'
-  //   accounts:uid1:username = 'username'
-  //   accounts:uid1:apiKey = 'api_key'
+  //   settings.accounts = '["uid1"]'
+  //   settings.accounts.uid1.site = 'https://e621.net'
+  //   settings.accounts.uid1.username = 'username'
+  //   settings.accounts.uid1.apiKey = 'api_key'
   const uids = Object.keys(state.accounts);
   localStorage.setItem("settings.accounts", JSON.stringify(uids));
   for (const [uid, account] of Object.entries(state.accounts)) {
     localStorage.setItem(`settings.accounts.${uid}.site`, account.site);
     localStorage.setItem(`settings.accounts.${uid}.username`, account.username);
-    localStorage.setItem(`settings.accounts.${uid}.apiKey`, account.apiKey);
+    localStorage.setItem(`settings.accounts.${uid}.api_key`, account.apiKey);
   }
   // SelectedAccount
-  //   selectedAccount = '"uid1"'
+  //   settings.selected_account = '"uid1"'
   localStorage.setItem("settings.selected_account", JSON.stringify(state.selectedAccount))
 
   // Other state
