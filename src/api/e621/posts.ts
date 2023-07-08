@@ -9,7 +9,7 @@ const PostAPI = {
     tags?: string;
     page?: number | string;
   } = {}) => {
-    return e621.get<{posts: Post[]}>('posts.json', {params: options});
+    return e621.get<{posts: Post[]}>('/posts.json', {params: options});
   }
 }
 

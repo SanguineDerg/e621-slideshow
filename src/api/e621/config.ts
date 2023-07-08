@@ -1,11 +1,11 @@
 import axios from 'axios';
 import rateLimit from 'axios-rate-limit';
-import { readAPIKey, readUsername } from '../../slices/settingsSlice';
+import { readUser } from '../../slices/settingsSlice';
 
 const USER_AGENT = "SanguineDerg's Slideshow/1.0 (by SanguineDerg on e621)";
 
 const _axios = axios.create({
-  baseURL: 'https://e621.net/',
+  baseURL: 'https://e621.net',
 });
 
 _axios.interceptors.request.use(config => {
@@ -15,14 +15,22 @@ _axios.interceptors.request.use(config => {
     _client: USER_AGENT,
   };
 
-  // Add HTTP Basic Auth
-  const username = readUsername();
-  const apiKey = readAPIKey();
-  if (username !== '' && apiKey !== '') {
+  // Account Settings
+  const user = readUser();
+  if (user != null) {
+    // Configure base url
+    config.baseURL = user.site;
+    // Add HTTP Basic Auth
     config.auth = {
-      username: username,
-      password: apiKey,
+      username: user.username,
+      password: user.apiKey,
     };
+  }
+
+  // Add Origin header for CORS
+  config.headers = {
+    ...config.headers,
+    "Origin": window.location.origin,
   }
 
   return config;

@@ -23,3 +23,13 @@
 .settingsContainer label {
   text-align: left;
 }
+
+.account {
+  border-left: solid .2em #777777;
+  padding: .2em;
+}
+
+.selectedAccount {
+  background-color: #3333cc;
+  border-color: #7777ff;
+}
