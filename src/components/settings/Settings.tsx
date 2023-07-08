@@ -1,10 +1,11 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useState, ChangeEvent, useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { clear } from '../../slices/postsSlice';
-import { ImageDisplaySize, selectImageDisplaySize, selectSelectedAccount, selectSetManagementButtonType, setImageDisplaySize, SetManagementButtonType, setSetManagementButtonType, DEFAULT_SITE, addAccount, selectAccount, removeAccount, selectSelectedAccountId, selectAllAccounts, UserAccount } from '../../slices/settingsSlice';
+import { ImageDisplaySize, selectImageDisplaySize, selectSelectedAccount, selectSetManagementButtonType, setImageDisplaySize, SetManagementButtonType, setSetManagementButtonType, DEFAULT_SITE, addAccount, selectAccount, removeAccount, selectSelectedAccountId, selectAllAccounts, UserAccount, setAutoplayDelay, selectAutoplayLoop, selectAutoplayDelay, setAutoplayLoop } from '../../slices/settingsSlice';
 import { fetchManagedSets, fetchWorkingSet, selectManagedSets, selectWorkingSetId, setWorkingSetId } from '../../slices/setSlice';
 import { switchScreen } from '../../slices/viewSlice';
 import styles from './Settings.module.css';
+import { eventNames } from 'process';
 
 export default function Settings() {
   const [site, setLocalSite] = useState(DEFAULT_SITE);
@@ -17,8 +18,15 @@ export default function Settings() {
   const managedSets = useAppSelector(selectManagedSets);
   const workingSetId = useAppSelector(selectWorkingSetId);
   const currentSetManagementButtonType = useAppSelector(selectSetManagementButtonType);
+  const autoplayDelay = useAppSelector(selectAutoplayDelay);
+  const autoplayLoop = useAppSelector(selectAutoplayLoop);
   
   const dispatch = useAppDispatch();
+
+  const [localAutoplayDelay, setLocalAutoplayDelay] = useState(autoplayDelay.toString());
+  useEffect(() => {
+    setLocalAutoplayDelay(autoplayDelay.toString());
+  }, [autoplayDelay, setLocalAutoplayDelay])
 
   const anonymousAccountButton = () => (
     <button
@@ -64,6 +72,16 @@ export default function Settings() {
     dispatch(fetchWorkingSet());
     dispatch(switchScreen('search'));
   }, [dispatch]);
+
+  const onAutoplayDelayChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
+    setLocalAutoplayDelay(event.target.value);
+    const numberValue = Number(event.target.value);
+    console.log(numberValue)
+    if (!isNaN(numberValue) && numberValue >= 1) {
+      console.log("good")
+      dispatch(setAutoplayDelay(numberValue));
+    }
+  }, [dispatch, setLocalAutoplayDelay, setAutoplayDelay]);
 
   return (
     <div className={styles.settingsContainer}>
@@ -123,6 +141,17 @@ export default function Settings() {
         <select value={currentSetManagementButtonType} onChange={e => dispatch(setSetManagementButtonType(e.target.value as SetManagementButtonType))}>
           <option value="mobile">Mobile</option>
           <option value="desktop">Desktop</option>
+        </select>
+        <label>
+          Autoplay Delay
+        </label>
+        <input type="number" min="1" value={localAutoplayDelay} onChange={onAutoplayDelayChange}></input>
+        <label>
+          Autoplay Loop
+        </label>
+        <select value={autoplayLoop.toString()} onChange={e => dispatch(setAutoplayLoop(e.target.value == "true"))}>
+          <option value="true">Enabled</option>
+          <option value="false">Disabled</option>
         </select>
       </fieldset>
 

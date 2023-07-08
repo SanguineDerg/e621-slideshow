@@ -1,0 +1,26 @@
+.autoplayButton {
+  pointer-events: all;
+  display: block;
+  background-color: transparent;
+  background-position: center;
+  background-size: contain;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: min(15vw, 15vh);
+  height: min(15vw, 15vh);
+  padding: 0;
+}
+
+.autoplayButton.mobile {
+  bottom: calc(max(8vw, 8vh) / 2);
+  left: calc(max(8vw, 8vh) / 2);
+  width: max(8vw, 8vh);
+  height: max(8vw, 8vh);
+}
+
+.autoplayButton svg circle {
+	fill: none;
+	stroke: #dddddd88;
+	stroke-width: 50%;
+}
