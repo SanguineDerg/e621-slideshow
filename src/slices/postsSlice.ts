@@ -7,11 +7,13 @@ import { resetUpdateSetStatus, selectWorkingSet } from './setSlice';
 import { BlacklistEntry, postMatchesBlacklists } from '../api/e621/blacklists';
 import { selectCurrentBlacklists } from './usersSlice';
 import { FlashDisplayMode, ImageDisplayMode, VideoDisplayMode, selectFlashDisplayMode, selectImageDisplayMode, selectVideoDisplayMode } from './settingsSlice';
+import { optimizeTags } from '../api/e621/tags';
 
 export interface PostsState {
   posts: {[postId: number]: Post};
   fetch_order: number[];
   fetch_tags: string;
+  fetch_optimized_tags: string;
   fetch_page: number;
   fetch_status: 'idle' | 'loading' | 'failed' | 'finished';
   fetch_id: string;
@@ -24,6 +26,7 @@ const initialState: PostsState = {
   posts: {},
   fetch_order: [],
   fetch_tags: '',
+  fetch_optimized_tags: '',
   fetch_page: 1,
   fetch_status: 'idle',
   fetch_id: '',
@@ -50,7 +53,7 @@ const fetchPosts = createAsyncThunk<
   'posts/fetchPosts',
   async (_, thunkAPI) => {
     return PostAPI.getPosts({
-      tags: selectTags(thunkAPI.getState()),
+      tags: selectOptimizedTags(thunkAPI.getState()),
       page: selectPage(thunkAPI.getState()),
     }).then((response) => {
       const blacklists = selectCurrentBlacklists(thunkAPI.getState());
@@ -77,6 +80,7 @@ export const postsSlice = createSlice({
     clear: (state) => {
       state.fetch_order = [];
       state.fetch_tags = '';
+      state.fetch_optimized_tags = '';
       state.fetch_page = 1;
       state.fetch_status = 'idle';
       state.fetch_id = '';
@@ -87,6 +91,7 @@ export const postsSlice = createSlice({
     startSearch: (state, action: PayloadAction<string>) => {
       state.fetch_order = [];
       state.fetch_tags = action.payload;
+      state.fetch_optimized_tags = optimizeTags(action.payload);
       state.fetch_page = 1;
       state.fetch_status = 'idle';
       state.fetch_id = '';
@@ -170,6 +175,7 @@ export const postsSlice = createSlice({
 export const { clear, startSearch, previousSlide, nextSlide } = postsSlice.actions;
 
 export const selectTags = (state: RootState) => state.posts.fetch_tags;
+export const selectOptimizedTags = (state: RootState) => state.posts.fetch_optimized_tags;
 export const selectPage = (state: RootState) => state.posts.fetch_page;
 export const selectFetchStatus = (state: RootState) => state.posts.fetch_status;
 export const selectFetchOrder = (state: RootState) => state.posts.fetch_order;

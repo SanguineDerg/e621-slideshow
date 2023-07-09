@@ -37,7 +37,7 @@ const parseBlacklistEntry = (tags: string) => {
     } else if (tag.charAt(0) === '~') {
       optional.push(tag.slice(1));
     } else {
-      const score = tag.match(/^score:[<=>]{0,2}-?\d+/);
+      const score = tag.match(/^score:([<=>]{0,2})(-?\d+)/);
       if (score) {
         scoreComparison = [normalizeComparisonOperator(score[1]), parseInt(score[2], 10)];
       } else {
