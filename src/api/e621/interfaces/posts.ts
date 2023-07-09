@@ -57,7 +57,7 @@ export interface PostSampleAlternate {
   type: string;
   height: number;
   width: number;
-  urls: (string | null)[];
+  urls: [string | null, string | null];
 }
 
 export interface PostScore {

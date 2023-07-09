@@ -1,11 +1,12 @@
 import { createSlice, PayloadAction, createAsyncThunk, createSelector } from '@reduxjs/toolkit';
 import axios, { AxiosError } from 'axios';
 import { Post } from '../api/e621/interfaces/posts';
-import PostAPI from '../api/e621/posts';
+import PostAPI, { getPostMediaType } from '../api/e621/posts';
 import { RootState, AppThunk } from '../app/store';
 import { resetUpdateSetStatus, selectWorkingSet } from './setSlice';
 import { BlacklistEntry, postMatchesBlacklists } from '../api/e621/blacklists';
 import { selectCurrentBlacklists } from './usersSlice';
+import { FlashDisplayMode, ImageDisplayMode, VideoDisplayMode, selectFlashDisplayMode, selectImageDisplayMode, selectVideoDisplayMode } from './settingsSlice';
 
 export interface PostsState {
   posts: {[postId: number]: Post};
@@ -31,8 +32,15 @@ const initialState: PostsState = {
   slideshow_index: 0,
 };
 
+interface FetchUserSettings {
+  imageDisplayMode: ImageDisplayMode;
+  videoDisplayMode: VideoDisplayMode;
+  flashDisplayMode: FlashDisplayMode;
+  blacklists: BlacklistEntry[] | null;
+}
+
 const fetchPosts = createAsyncThunk<
-  [Post[], BlacklistEntry[] | null],
+  [Post[], FetchUserSettings],
   void,
   {
     state: RootState,
@@ -46,7 +54,16 @@ const fetchPosts = createAsyncThunk<
       page: selectPage(thunkAPI.getState()),
     }).then((response) => {
       const blacklists = selectCurrentBlacklists(thunkAPI.getState());
-      return [response.data.posts, blacklists] as [Post[], BlacklistEntry[] | null];
+      const imageDisplayMode = selectImageDisplayMode(thunkAPI.getState());
+      const videoDisplayMode = selectVideoDisplayMode(thunkAPI.getState());
+      const flashDisplayMode = selectFlashDisplayMode(thunkAPI.getState());
+      const FetchUserSettings: FetchUserSettings = {
+        blacklists: blacklists,
+        imageDisplayMode: imageDisplayMode,
+        videoDisplayMode: videoDisplayMode,
+        flashDisplayMode: flashDisplayMode,
+      };
+      return [response.data.posts, FetchUserSettings] as [Post[], FetchUserSettings];
     }).catch((error: Error | AxiosError) => {
       return thunkAPI.rejectWithValue(error);
     });
@@ -102,7 +119,7 @@ export const postsSlice = createSlice({
         if (action.meta.requestId !== state.fetch_id) return;
         state.fetch_error = null;
         state.fetch_error_hint = null;
-        const [posts, blacklists] = action.payload;
+        const [posts, userSettings] = action.payload;
         if (posts.length === 0) {
           state.fetch_status = 'finished';
           state.fetch_page = 0;
@@ -112,10 +129,21 @@ export const postsSlice = createSlice({
           state.fetch_page = state.fetch_page && state.fetch_page + 1;
           state.fetch_id = '';
           posts.forEach(post => {
-            if (blacklists === null || !postMatchesBlacklists(post, blacklists)) {
-              state.posts[post.id] = post;
-              state.fetch_order.push(post.id);
+            // TODO: perform filtering separately from fetch
+            switch (getPostMediaType(post)) {
+              case 'image':
+                if (userSettings.imageDisplayMode === 'hide') return;
+                break;
+              case 'video':
+                if (userSettings.videoDisplayMode === 'hide') return;
+                break;
+              case 'flash':
+                if (userSettings.flashDisplayMode === 'hide') return;
+                break;
             }
+            if (userSettings.blacklists !== null && postMatchesBlacklists(post, userSettings.blacklists)) return;
+            state.posts[post.id] = post;
+            state.fetch_order.push(post.id);
           });
         }
       })
