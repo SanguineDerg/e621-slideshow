@@ -1,3 +1,4 @@
+import { DEFAULT_SITE, readUserAccount } from '../../slices/accountsSlice';
 import { readImageDisplaySize } from '../../slices/settingsSlice';
 import { e621 } from './config';
 import { Post } from './interfaces/posts';
@@ -40,12 +41,15 @@ const getPostImageURL = (post: Post) => {
 const getPostImageBypassURL = (post: Post) => {
   const imageDisplaySize = readImageDisplaySize();
   const md5 = post.file.md5;
+  // TODO: Find a better way to handle this translation
+  const account = readUserAccount();
+  const imageSite = (account === null || account.site === DEFAULT_SITE) ? 'https://static1.e621.net' : account.site;
   switch (imageDisplaySize) {
     case 'full':
-      return `https://static1.e621.net/data/${md5.substring(0, 2)}/${md5.substring(2, 4)}/${md5}.${post.file.ext}`;
+      return `${imageSite}/data/${md5.substring(0, 2)}/${md5.substring(2, 4)}/${md5}.${post.file.ext}`;
     case 'sample':
-      if (!post.sample.has) return `https://static1.e621.net/data/${md5.substring(0, 2)}/${md5.substring(2, 4)}/${md5}.${post.file.ext}`;
-      return `https://static1.e621.net/data/sample/${md5.substring(0, 2)}/${md5.substring(2, 4)}/${md5}.jpg`;
+      if (!post.sample.has) return `${imageSite}/data/${md5.substring(0, 2)}/${md5.substring(2, 4)}/${md5}.${post.file.ext}`;
+      return `${imageSite}/data/sample/${md5.substring(0, 2)}/${md5.substring(2, 4)}/${md5}.jpg`;
   }
 }
 

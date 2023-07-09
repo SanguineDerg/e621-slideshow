@@ -60,7 +60,7 @@ const parseBlacklistEntry = (tags: string) => {
   } as BlacklistEntry;
 }
 
-const parseBlacklistEntries = (blacklistTags: string[]) => {
+export const parseBlacklistEntries = (blacklistTags: string[]) => {
   return blacklistTags
   .map(e => e.replace(/(rating:[qes])\w+/ig, "$1").toLowerCase())
   .filter(e => e.trim() !== "")
@@ -75,7 +75,7 @@ const rangeComparator = (comparison: [string, number] | null, target: number) =>
     case '<=':
       return target <= comparison[1];
     case '==':
-      return target == comparison[1];
+      return target === comparison[1];
     case '>=':
       return target >= comparison[1];
     case '>':
@@ -138,6 +138,10 @@ const postMatchesBlacklist = (post: Post, entry: BlacklistEntry) => {
   }
 
   return (isSubset(tags, entry.require) && scoreTest)
-    && (!entry.optional.length || intersect(tags, entry.optional).length)
-    && !intersect(tags, entry.exclude).length
+    && (entry.optional.length === 0 || intersect(tags, entry.optional).length > 0)
+    && intersect(tags, entry.exclude).length === 0
+}
+
+export const postMatchesBlacklists = (post: Post, entries: BlacklistEntry[]) => {
+  return entries.some(entry => postMatchesBlacklist(post, entry));
 }

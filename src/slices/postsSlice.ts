@@ -4,9 +4,11 @@ import { Post } from '../api/e621/interfaces/posts';
 import PostAPI from '../api/e621/posts';
 import { RootState, AppThunk } from '../app/store';
 import { resetUpdateSetStatus, selectWorkingSet } from './setSlice';
+import { BlacklistEntry, postMatchesBlacklists } from '../api/e621/blacklists';
+import { selectCurrentBlacklists } from './usersSlice';
 
 export interface PostsState {
-  posts: {[key: number]: Post};
+  posts: {[postId: number]: Post};
   fetch_order: number[];
   fetch_tags: string;
   fetch_page: number;
@@ -30,7 +32,7 @@ const initialState: PostsState = {
 };
 
 const fetchPosts = createAsyncThunk<
-  Post[],
+  [Post[], BlacklistEntry[] | null],
   void,
   {
     state: RootState,
@@ -43,7 +45,8 @@ const fetchPosts = createAsyncThunk<
       tags: selectTags(thunkAPI.getState()),
       page: selectPage(thunkAPI.getState()),
     }).then((response) => {
-      return response.data.posts;
+      const blacklists = selectCurrentBlacklists(thunkAPI.getState());
+      return [response.data.posts, blacklists] as [Post[], BlacklistEntry[] | null];
     }).catch((error: Error | AxiosError) => {
       return thunkAPI.rejectWithValue(error);
     });
@@ -99,7 +102,7 @@ export const postsSlice = createSlice({
         if (action.meta.requestId !== state.fetch_id) return;
         state.fetch_error = null;
         state.fetch_error_hint = null;
-        const posts = action.payload;
+        const [posts, blacklists] = action.payload;
         if (posts.length === 0) {
           state.fetch_status = 'finished';
           state.fetch_page = 0;
@@ -109,8 +112,10 @@ export const postsSlice = createSlice({
           state.fetch_page = state.fetch_page && state.fetch_page + 1;
           state.fetch_id = '';
           posts.forEach(post => {
-            state.posts[post.id] = post;
-            state.fetch_order.push(post.id);
+            if (blacklists === null || !postMatchesBlacklists(post, blacklists)) {
+              state.posts[post.id] = post;
+              state.fetch_order.push(post.id);
+            }
           });
         }
       })

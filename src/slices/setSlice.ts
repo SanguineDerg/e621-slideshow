@@ -1,33 +1,20 @@
-import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { ManagedSets, Set } from '../api/e621/interfaces/sets';
 import SetsAPI from '../api/e621/sets';
-import { readLocalStorage, writeLocalStorage } from '../app/localStorage';
 import { RootState } from '../app/store';
+import { selectWorkingSetId } from './accountsSlice';
 
 export interface SetState {
   managed_sets: ManagedSets | null;
-  working_set_id: number | null;
   working_set: Set | null;
   update_set_status: 'idle' | 'working' | 'added' | 'removed' | 'failed';
 }
 
 const initialState: SetState = {
   managed_sets: null,
-  working_set_id: null,
   working_set: null,
   update_set_status: 'idle',
 };
-
-export const readWorkingSetId = () => readLocalStorage('sets.working_set_id', initialState.working_set_id);
-
-export const writeWorkingSetId = (workingSetId: number | null) => writeLocalStorage('sets.working_set_id', workingSetId);
-
-export const getLocalStorageSets = () => {
-  return {
-    ...initialState,
-    working_set_id: readWorkingSetId(),
-  } as SetState;
-}
 
 export const fetchManagedSets = createAsyncThunk(
   'sets/fetchManagedSets',
@@ -83,10 +70,10 @@ export const setSlice = createSlice({
   name: 'sets',
   initialState,
   reducers: {
-    setWorkingSetId: (state, action: PayloadAction<number | null>) => {
-      state.working_set_id = action.payload;
+    clear: (state) => {
+      state.managed_sets = null;
       state.working_set = null;
-      writeWorkingSetId(action.payload);
+      state.update_set_status = 'idle';
     },
     resetUpdateSetStatus: (state) => {
       state.update_set_status = 'idle';
@@ -100,9 +87,7 @@ export const setSlice = createSlice({
       .addCase(fetchManagedSets.rejected, (state, action) => {
         // Sets could not be fetched, probably not logged in
         state.managed_sets = null;
-        state.working_set_id = null;
         state.working_set = null;
-        writeWorkingSetId(null);
       })
       .addCase(fetchWorkingSet.fulfilled, (state, action) => {
         state.working_set = action.payload;
@@ -141,10 +126,9 @@ export const setSlice = createSlice({
   },
 });
 
-export const { setWorkingSetId, resetUpdateSetStatus } = setSlice.actions;
+export const { clear, resetUpdateSetStatus } = setSlice.actions;
 
 export const selectManagedSets = (state: RootState) => state.sets.managed_sets;
-export const selectWorkingSetId = (state: RootState) => state.sets.working_set_id;
 export const selectWorkingSet = (state: RootState) => state.sets.working_set;
 export const selectUpdateSetStatus = (state: RootState) => state.sets.update_set_status;
 
