@@ -1,20 +1,25 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
-import postsReducer from '../slices/postsSlice';
+import postsReducer, { clear as clearPosts } from '../slices/postsSlice';
 import settingsSlice, { getLocalStorageSettings } from '../slices/settingsSlice';
-import setSlice, { getLocalStorageSets } from '../slices/setSlice';
+import accountsReducer, { getLocalStorageAccounts } from '../slices/accountsSlice';
+import setSlice, { clear as clearSets } from '../slices/setSlice';
 import viewReducer from '../slices/viewSlice';
 import tutorialSlice, { getLocalStorageTutorial } from '../slices/tutorialSlice';
+import usersSlice, { clear as clearUsers, fetchCurrentUser } from '../slices/usersSlice';
+import { fetchManagedSets, fetchWorkingSet } from '../slices/setSlice';
 
 export const store = configureStore({
   reducer: {
+    accounts: accountsReducer,
     posts: postsReducer,
-    view: viewReducer,
-    settings: settingsSlice,
     sets: setSlice,
+    settings: settingsSlice,
     tutorial: tutorialSlice,
+    users: usersSlice,
+    view: viewReducer,
   },
   preloadedState: {
-    sets: getLocalStorageSets(),
+    accounts: getLocalStorageAccounts(),
     settings: getLocalStorageSettings(),
     tutorial: getLocalStorageTutorial(),
   },
@@ -28,3 +33,12 @@ export type AppThunk<ReturnType = void> = ThunkAction<
   unknown,
   Action<string>
 >;
+
+export const refreshAccountBasedState = (dispatch: AppDispatch) => {
+  dispatch(clearPosts());
+  dispatch(clearSets());
+  dispatch(clearUsers());
+  dispatch(fetchManagedSets());
+  dispatch(fetchWorkingSet());
+  dispatch(fetchCurrentUser());
+}

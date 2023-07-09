@@ -2,12 +2,11 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
-import { store } from './app/store';
+import { refreshAccountBasedState, store } from './app/store';
 import { Provider } from 'react-redux';
 import * as serviceWorker from './serviceWorker';
-import { fetchManagedSets } from './slices/setSlice';
 
-store.dispatch(fetchManagedSets());
+refreshAccountBasedState(store.dispatch);
 
 ReactDOM.render(
   <React.StrictMode>

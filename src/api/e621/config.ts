@@ -1,6 +1,6 @@
 import axios from 'axios';
 import rateLimit from 'axios-rate-limit';
-import { readUser } from '../../slices/settingsSlice';
+import { readUserAccount } from '../../slices/accountsSlice';
 
 const USER_AGENT = "SanguineDerg's Slideshow/1.0 (by SanguineDerg on e621)";
 
@@ -16,14 +16,14 @@ _axios.interceptors.request.use(config => {
   };
 
   // Account Settings
-  const user = readUser();
-  if (user != null) {
+  const account = readUserAccount();
+  if (account != null) {
     // Configure base url
-    config.baseURL = user.site;
+    config.baseURL = account.site;
     // Add HTTP Basic Auth
     config.auth = {
-      username: user.username,
-      password: user.apiKey,
+      username: account.username,
+      password: account.apiKey,
     };
   }
 

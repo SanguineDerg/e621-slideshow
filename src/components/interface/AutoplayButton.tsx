@@ -40,7 +40,7 @@ export default function AutoplayButton() {
       }
     }, autoplayDelay);
     return () => clearTimeout(timeout);
-  }, [enableAutoplay, nextSlide, autoplayDelay, currentIndex]);
+  }, [enableAutoplay, nextSlide, autoplayDelay, currentIndex, autoplayLoop, restartSlideshow]);
 
   const toggleAutoplay = useCallback(() => {
     setEnableAutoplay(!enableAutoplay);

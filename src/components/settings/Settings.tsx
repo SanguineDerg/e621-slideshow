@@ -1,11 +1,12 @@
 import { useCallback, useState, ChangeEvent, useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { clear } from '../../slices/postsSlice';
-import { ImageDisplaySize, selectImageDisplaySize, selectSelectedAccount, selectSetManagementButtonType, setImageDisplaySize, SetManagementButtonType, setSetManagementButtonType, DEFAULT_SITE, addAccount, selectAccount, removeAccount, selectSelectedAccountId, selectAllAccounts, UserAccount, setAutoplayDelay, selectAutoplayLoop, selectAutoplayDelay, setAutoplayLoop } from '../../slices/settingsSlice';
-import { fetchManagedSets, fetchWorkingSet, selectManagedSets, selectWorkingSetId, setWorkingSetId } from '../../slices/setSlice';
+import { ImageDisplaySize, selectImageDisplaySize, selectSetManagementButtonType, setImageDisplaySize, SetManagementButtonType, setSetManagementButtonType, setAutoplayDelay, selectAutoplayLoop, selectAutoplayDelay, setAutoplayLoop } from '../../slices/settingsSlice';
+import { fetchManagedSets, fetchWorkingSet, selectManagedSets } from '../../slices/setSlice';
 import { switchScreen } from '../../slices/viewSlice';
 import styles from './Settings.module.css';
-import { eventNames } from 'process';
+import { DEFAULT_SITE, UserAccount, addAccount, removeAccount, selectAccount, selectAllAccounts, selectSelectedAccountId, selectWorkingSetId, updateAccountWorkingSetId } from '../../slices/accountsSlice';
+import { refreshAccountBasedState } from '../../app/store';
 
 export default function Settings() {
   const [site, setLocalSite] = useState(DEFAULT_SITE);
@@ -39,7 +40,7 @@ export default function Settings() {
   const accountButton = (uid: string, user: UserAccount) => (
     <button
       className={selectedAccountId === uid ? [styles.account, styles.selectedAccount].join(" ") : styles.account}
-      type="button" onClick={() => saveSelectAccount(uid)}
+      type="button" key={uid} onClick={() => saveSelectAccount(uid)}
     >
       <span>{user.username} @ {user.site}</span>
     </button>
@@ -50,28 +51,36 @@ export default function Settings() {
       site: site,
       username: username,
       apiKey: apiKey,
+      workingSetId: null,
     }));
     setLocalSite(DEFAULT_SITE);
     setLocalUsername('');
     setLocalAPIKey('');
-  }, [dispatch, username, apiKey]);
+  }, [dispatch, site, username, apiKey]);
 
   const saveSelectAccount = useCallback((uid: string | null) => {
     dispatch(selectAccount(uid));
-    dispatch(clear());
+    console.log("thing happened")
+    refreshAccountBasedState(dispatch);
   }, [dispatch]);
 
   const removeSelectedAccount = useCallback(() => {
     if (selectedAccountId !== null) {
       dispatch(removeAccount(selectedAccountId));
     }
-    dispatch(clear());
+    refreshAccountBasedState(dispatch);
   }, [dispatch, selectedAccountId]);
 
   const close = useCallback(() => {
     dispatch(fetchWorkingSet());
     dispatch(switchScreen('search'));
   }, [dispatch]);
+
+  const onWorkingSetIdChange = useCallback((event: ChangeEvent<HTMLSelectElement>) => {
+    if (selectedAccountId !== null) {
+      dispatch(updateAccountWorkingSetId([selectedAccountId, event.target.value !== "" ? parseInt(event.target.value) : null]))
+    }
+  }, [dispatch, selectedAccountId]);
 
   const onAutoplayDelayChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
     setLocalAutoplayDelay(event.target.value);
@@ -81,7 +90,7 @@ export default function Settings() {
       console.log("good")
       dispatch(setAutoplayDelay(numberValue));
     }
-  }, [dispatch, setLocalAutoplayDelay, setAutoplayDelay]);
+  }, [dispatch, setLocalAutoplayDelay]);
 
   return (
     <div className={styles.settingsContainer}>
@@ -109,7 +118,7 @@ export default function Settings() {
         <button onClick={() => dispatch(fetchManagedSets())}>Get sets</button>
         {managedSets !== null && (
           <>
-            <select value={workingSetId !== null ? workingSetId : undefined} onChange={e => dispatch(setWorkingSetId(e.target.value !== "" ? parseInt(e.target.value) : null))}>
+            <select value={workingSetId !== null ? workingSetId : undefined} onChange={onWorkingSetIdChange}>
               <option>Select a set</option>
               <optgroup label="Owned">
                 {managedSets.Owned.map(([setName, setId], index) => (
@@ -149,7 +158,7 @@ export default function Settings() {
         <label>
           Autoplay Loop
         </label>
-        <select value={autoplayLoop.toString()} onChange={e => dispatch(setAutoplayLoop(e.target.value == "true"))}>
+        <select value={autoplayLoop.toString()} onChange={e => dispatch(setAutoplayLoop(e.target.value === "true"))}>
           <option value="true">Enabled</option>
           <option value="false">Disabled</option>
         </select>
