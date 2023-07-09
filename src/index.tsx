@@ -5,9 +5,10 @@ import App from './App';
 import { store } from './app/store';
 import { Provider } from 'react-redux';
 import * as serviceWorker from './serviceWorker';
-import { fetchManagedSets } from './slices/setSlice';
+import { fetchManagedSets, fetchWorkingSet } from './slices/setSlice';
 
 store.dispatch(fetchManagedSets());
+store.dispatch(fetchWorkingSet());
 
 ReactDOM.render(
   <React.StrictMode>
