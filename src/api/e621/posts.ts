@@ -1,5 +1,5 @@
 import { DEFAULT_SITE, readUserAccount } from '../../slices/accountsSlice';
-import { readImageDisplaySize } from '../../slices/settingsSlice';
+import { VideoDisplayType, readImageDisplaySize, readVideoDisplaySize, readVideoDisplayType } from '../../slices/settingsSlice';
 import { e621 } from './config';
 import { Post } from './interfaces/posts';
 
@@ -27,42 +27,95 @@ export const getPostMediaType = (post: Post) => {
   }
 }
 
-const getPostImageURL = (post: Post) => {
-  if (post.file.url === null) return getPostImageBypassURL(post);
-  const imageDisplaySize = readImageDisplaySize();
-  switch (imageDisplaySize) {
-    case 'full':
-      return post.file.url;
-    case 'sample':
-      return post.sample.url;
-  }
-}
-
-const getPostImageBypassURL = (post: Post) => {
-  const imageDisplaySize = readImageDisplaySize();
-  const md5 = post.file.md5;
+const getCurrentImageSite = () => {
   // TODO: Find a better way to handle this translation
   const account = readUserAccount();
-  const imageSite = (account === null || account.site === DEFAULT_SITE) ? 'https://static1.e621.net' : account.site;
+  return (account === null || account.site === DEFAULT_SITE) ? 'https://static1.e621.net' : account.site;
+}
+
+export const getPostImageUrl = (post: Post) => {
+  if (post.file.url === null) return getPostImageBypassUrl(post);
+  const imageDisplaySize = readImageDisplaySize();
   switch (imageDisplaySize) {
-    case 'full':
-      return `${imageSite}/data/${md5.substring(0, 2)}/${md5.substring(2, 4)}/${md5}.${post.file.ext}`;
     case 'sample':
-      if (!post.sample.has) return `${imageSite}/data/${md5.substring(0, 2)}/${md5.substring(2, 4)}/${md5}.${post.file.ext}`;
-      return `${imageSite}/data/sample/${md5.substring(0, 2)}/${md5.substring(2, 4)}/${md5}.jpg`;
+    default:
+      return post.sample.url;
+    case 'full':
+      return post.file.url;
   }
 }
 
-export const getPostMediaURL = (post: Post) => {
-  // TODO add URLs for videos and flash
-  switch (getPostMediaType(post)) {
-    case 'image':
-      return getPostImageURL(post);
-    case 'video':
-      return '';
-    case 'flash':
-      return '';
+const getPostImageBypassUrl = (post: Post) => {
+  const imageDisplaySize = readImageDisplaySize();
+  const md5 = post.file.md5;
+  const imageSite = getCurrentImageSite();
+  switch (imageDisplaySize) {
+    case 'sample':
+    default:
+      if (post.sample.has) return `${imageSite}/data/sample/${md5.substring(0, 2)}/${md5.substring(2, 4)}/${md5}.jpg`;
+      return `${imageSite}/data/${md5.substring(0, 2)}/${md5.substring(2, 4)}/${md5}.${post.file.ext}`; // Fallback to full
+    case 'full':
+      return `${imageSite}/data/${md5.substring(0, 2)}/${md5.substring(2, 4)}/${md5}.${post.file.ext}`;
   }
+}
+
+const getVideoTypeIndex = (type: VideoDisplayType) => {
+  switch (type) {
+    case 'webm':
+      return 0;
+    case 'mp4':
+    default:
+      return 1;
+  }
+}
+
+export const getPostVideoUrl = (post: Post) => {
+  if (post.file.url === null) return getPostVideoBypassUrl(post);
+  const videoDisplaySize = readVideoDisplaySize();
+  const videoTypeIndex = getVideoTypeIndex(readVideoDisplayType());
+  switch (videoDisplaySize) {
+    case '480p':
+      if (!!post.sample.alternates['480p']) return post.sample.alternates['480p']?.urls[videoTypeIndex] as string;
+      if (!!post.sample.alternates.original && videoTypeIndex !== 0) return post.sample.alternates.original?.urls[videoTypeIndex] as string;
+      return post.file.url;
+    case '720p':
+    default:
+      if (!!post.sample.alternates['720p']) return post.sample.alternates['720p']?.urls[videoTypeIndex] as string;
+      if (!!post.sample.alternates.original && videoTypeIndex !== 0) return post.sample.alternates.original?.urls[videoTypeIndex] as string;
+      return post.file.url;
+    case 'full':
+      if (!!post.sample.alternates.original && videoTypeIndex !== 0) return post.sample.alternates.original?.urls[videoTypeIndex] as string;
+      return post.file.url;
+  }
+}
+
+const getPostVideoBypassUrl = (post: Post) => {
+  const videoDisplaySize = readVideoDisplaySize();
+  const md5 = post.file.md5;
+  const imageSite = getCurrentImageSite();
+  const videoDisplayType = readVideoDisplayType();
+  switch (videoDisplaySize) {
+    case '480p':
+      if (!!post.sample.alternates['480p']) return `${imageSite}/data/sample/${md5.substring(0, 2)}/${md5.substring(2, 4)}/${md5}_480p.${videoDisplayType}`;
+      return `${imageSite}/data/${md5.substring(0, 2)}/${md5.substring(2, 4)}/${md5}.${videoDisplayType}`;
+    case '720p':
+    default:
+      if (!!post.sample.alternates['720p']) return `${imageSite}/data/sample/${md5.substring(0, 2)}/${md5.substring(2, 4)}/${md5}_720p.${videoDisplayType}`;
+      return `${imageSite}/data/${md5.substring(0, 2)}/${md5.substring(2, 4)}/${md5}.${videoDisplayType}`;
+    case 'full':
+      return `${imageSite}/data/${md5.substring(0, 2)}/${md5.substring(2, 4)}/${md5}.${videoDisplayType}`;
+  }
+}
+
+export const getPostVideoPreviewUrl = (post: Post) => {
+  if (post.sample.url === null) return getPostVideoPreviewBypassUrl(post);
+  return post.sample.url;
+}
+
+const getPostVideoPreviewBypassUrl = (post: Post) => {
+  const md5 = post.file.md5;
+  const imageSite = getCurrentImageSite();
+  return `${imageSite}/data/sample/${md5.substring(0, 2)}/${md5.substring(2, 4)}/${md5}.jpg`;
 }
 
 export default PostAPI

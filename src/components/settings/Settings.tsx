@@ -1,7 +1,6 @@
 import { useCallback, useState, ChangeEvent, useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { clear } from '../../slices/postsSlice';
-import { ImageDisplaySize, selectImageDisplaySize, selectSetManagementButtonType, setImageDisplaySize, SetManagementButtonType, setSetManagementButtonType, setAutoplayDelay, selectAutoplayLoop, selectAutoplayDelay, setAutoplayLoop } from '../../slices/settingsSlice';
+import { ImageDisplaySize, selectImageDisplaySize, selectSetManagementButtonType, setImageDisplaySize, SetManagementButtonType, setSetManagementButtonType, setAutoplayDelay, selectAutoplayLoop, selectAutoplayDelay, setAutoplayLoop, setVideoDisplaySize, VideoDisplaySize, selectVideoDisplaySize, selectVideoDisplayType, setVideoDisplayType, VideoDisplayType, selectVideoDisplayMode, selectFlashDisplayMode, setImageDisplayMode, ImageDisplayMode, setVideoDisplayMode, VideoDisplayMode, FlashDisplayMode, setFlashDisplayMode, selectImageDisplayMode } from '../../slices/settingsSlice';
 import { fetchManagedSets, fetchWorkingSet, selectManagedSets } from '../../slices/setSlice';
 import { switchScreen } from '../../slices/viewSlice';
 import styles from './Settings.module.css';
@@ -16,6 +15,11 @@ export default function Settings() {
   const allAccounts = useAppSelector(selectAllAccounts);
   const selectedAccountId = useAppSelector(selectSelectedAccountId);
   const currentImageDisplaySize = useAppSelector(selectImageDisplaySize);
+  const currentImageDisplayMode = useAppSelector(selectImageDisplayMode);
+  const currentVideoDisplaySize = useAppSelector(selectVideoDisplaySize);
+  const currentVideoDisplayType = useAppSelector(selectVideoDisplayType);
+  const currentVideoDisplayMode = useAppSelector(selectVideoDisplayMode);
+  const currentFlashDisplayMode = useAppSelector(selectFlashDisplayMode);
   const managedSets = useAppSelector(selectManagedSets);
   const workingSetId = useAppSelector(selectWorkingSetId);
   const currentSetManagementButtonType = useAppSelector(selectSetManagementButtonType);
@@ -56,11 +60,11 @@ export default function Settings() {
     setLocalSite(DEFAULT_SITE);
     setLocalUsername('');
     setLocalAPIKey('');
+    refreshAccountBasedState(dispatch);
   }, [dispatch, site, username, apiKey]);
 
   const saveSelectAccount = useCallback((uid: string | null) => {
     dispatch(selectAccount(uid));
-    console.log("thing happened")
     refreshAccountBasedState(dispatch);
   }, [dispatch]);
 
@@ -85,9 +89,7 @@ export default function Settings() {
   const onAutoplayDelayChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
     setLocalAutoplayDelay(event.target.value);
     const numberValue = Number(event.target.value);
-    console.log(numberValue)
     if (!isNaN(numberValue) && numberValue >= 1) {
-      console.log("good")
       dispatch(setAutoplayDelay(numberValue));
     }
   }, [dispatch, setLocalAutoplayDelay]);
@@ -138,11 +140,48 @@ export default function Settings() {
       <fieldset>
         <legend>Display</legend>
         <label>
-          Image size
+          Image Size
         </label>
         <select value={currentImageDisplaySize} onChange={e => dispatch(setImageDisplaySize(e.target.value as ImageDisplaySize))}>
           <option value="full">Full Image</option>
           <option value="sample">Sample Image</option>
+        </select>
+        <label>
+          Image Display Mode
+        </label>
+        <select value={currentImageDisplayMode} onChange={e => dispatch(setImageDisplayMode(e.target.value as ImageDisplayMode))}>
+          <option value="hide">Hide</option>
+          <option value="embed">Embed</option>
+        </select>
+        <label>
+          Video Size
+        </label>
+        <select value={currentVideoDisplaySize} onChange={e => dispatch(setVideoDisplaySize(e.target.value as VideoDisplaySize))}>
+          <option value="480p">480p</option>
+          <option value="720p">720p</option>
+          <option value="full">Full</option>
+        </select>
+        <label>
+          Video Type
+        </label>
+        <select value={currentVideoDisplayType} onChange={e => dispatch(setVideoDisplayType(e.target.value as VideoDisplayType))}>
+          <option value="webm">WEBM</option>
+          <option value="mp4">MP4</option>
+        </select>
+        <label>
+          Video Display Mode
+        </label>
+        <select value={currentVideoDisplayMode} onChange={e => dispatch(setVideoDisplayMode(e.target.value as VideoDisplayMode))}>
+          <option value="hide">Hide</option>
+          <option value="preview">Preview</option>
+          <option value="embed">Embed</option>
+        </select>
+        <label>
+          Flash Display Mode
+        </label>
+        <select value={currentFlashDisplayMode} onChange={e => dispatch(setFlashDisplayMode(e.target.value as FlashDisplayMode))}>
+          <option value="hide">Hide</option>
+          <option value="preview">Preview</option>
         </select>
         <label>
           Set Management Button Size

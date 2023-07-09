@@ -1,7 +1,8 @@
 import { useSelector } from 'react-redux';
-import { getPostMediaType, getPostMediaURL } from '../../api/e621/posts';
+import { getPostImageUrl, getPostMediaType, getPostVideoPreviewUrl } from '../../api/e621/posts';
 import { selectCurrentSlideshowPost, selectFetchError, selectFetchErrorHint, selectFetchStatus } from '../../slices/postsSlice';
 import styles from './Display.module.css'
+import { selectVideoDisplayMode } from '../../slices/settingsSlice';
 
 export function Display() {
   const currentPost = useSelector(selectCurrentSlideshowPost);
@@ -10,14 +11,16 @@ export function Display() {
   const errorHint = useSelector(selectFetchErrorHint);
 
   const currentFiletype = currentPost !== null ? getPostMediaType(currentPost) : null;
+  const videoDisplayMode = useSelector(selectVideoDisplayMode);
+  // TODO: support embedded video
 
   return (
     <div className={styles.displayContainer}>
-      {currentFiletype === 'image' && (
-        <img className={styles.image} src={currentPost !== null ? (getPostMediaURL(currentPost)) : undefined} alt="" />
+      {currentPost !== null && currentFiletype === 'image' && (
+        <img className={styles.image} src={getPostImageUrl(currentPost)} alt="" />
       )}
-      {currentFiletype === 'video' && (
-        <div className={styles.text}>
+      {currentPost !== null && currentFiletype === 'video' && (
+        <div className={styles.text} style={{backgroundImage: `url("${getPostVideoPreviewUrl(currentPost)}")`}}>
           <span>
             Video
           </span>
