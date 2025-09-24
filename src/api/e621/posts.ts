@@ -21,6 +21,7 @@ export const getPostMediaType = (post: Post) => {
     case 'gif':
       return 'image';
     case 'webm':
+    case 'mp4':
       return 'video';
     case 'swf':
       return 'flash';
@@ -34,14 +35,13 @@ const getCurrentImageSite = () => {
 }
 
 export const getPostImageUrl = (post: Post) => {
-  if (post.file.url === null) return getPostImageBypassUrl(post);
   const imageDisplaySize = readImageDisplaySize();
   switch (imageDisplaySize) {
     case 'sample':
     default:
-      return post.sample.url;
+      return post.sample.url || getPostImageBypassUrl(post);
     case 'full':
-      return post.file.url;
+      return post.file.url || getPostImageBypassUrl(post);
   }
 }
 
