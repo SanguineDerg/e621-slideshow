@@ -73,6 +73,30 @@ const fetchPosts = createAsyncThunk<
   }
 );
 
+export const favoritePost = createAsyncThunk<
+  Post,
+  number,
+  {state: RootState}
+>(
+  'posts/favoritePost',
+  async (postId, thunkAPI) => {
+    const response = await PostAPI.favoritePost(postId);
+    return response.data.post;
+  }
+);
+
+export const unfavoritePost = createAsyncThunk<
+  number,
+  number,
+  {state: RootState}
+>(
+  'posts/unfavoritePost',
+  async (postId, thunkAPI) => {
+    const response = await PostAPI.unfavoritePost(postId);
+    return postId;
+  }
+);
+
 export const postsSlice = createSlice({
   name: 'posts',
   initialState,
@@ -167,6 +191,16 @@ export const postsSlice = createSlice({
         } else {
           state.fetch_error = `${action.payload}`;
           state.fetch_error_hint = 'Unexpected error, please report it as a bug';
+        }
+      })
+      .addCase(favoritePost.fulfilled, (state, action) => {
+        state.posts[action.payload.id] = action.payload;
+      })
+      .addCase(unfavoritePost.fulfilled, (state, action) => {
+        const post = state.posts[action.payload]
+        if (post) {
+          post.fav_count--;
+          post.is_favorited = false;
         }
       });
   },

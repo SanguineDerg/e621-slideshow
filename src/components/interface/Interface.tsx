@@ -3,6 +3,7 @@ import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { nextSlideAndPrefetch, previousSlideAndPrefetch, selectCurrentSlideshowPost } from '../../slices/postsSlice';
 import { switchScreen } from '../../slices/viewSlice';
 import styles from './Interface.module.css';
+import FavoriteButton from './FavoriteButton';
 import ManageSetButton from './ManageSetButton';
 import AutoplayButton from './AutoplayButton';
 import { selectCurrentSite } from '../../slices/accountsSlice';
@@ -49,6 +50,7 @@ export function Interface() {
       </div>
       <div className={styles.extraControls}>
         <AutoplayButton />
+        <FavoriteButton />
         <ManageSetButton />
       </div>
     </div>

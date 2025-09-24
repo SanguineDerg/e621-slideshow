@@ -11,7 +11,18 @@ const PostAPI = {
     page?: number | string;
   } = {}) => {
     return e621.get<{posts: Post[]}>('/posts.json', {params: options});
-  }
+  },
+  favoritePost: (postId: number) => {
+    const formData = new FormData();
+    formData.append('post_id', postId.toString());
+    return e621.post<{post: Post}>(`/favorites.json`, formData);
+  },
+  unfavoritePost: (postId: number) => {
+    const formData = new FormData();
+    // Monkey patch solution to make a DELETE request
+    formData.append('_method', 'DELETE');
+    return e621.post(`/favorites/${postId}.json`, formData);
+  },
 }
 
 export const getPostMediaType = (post: Post) => {
