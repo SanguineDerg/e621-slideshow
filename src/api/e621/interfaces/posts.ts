@@ -27,7 +27,7 @@ export interface Post {
 export interface PostFile {
   width: number;
   height: number;
-  ext: 'jpg' | 'png' | 'gif' | 'webm' | 'swf';
+  ext: 'jpg' | 'png' | 'gif' | 'webm' | 'mp4'| 'swf';
   size: number;
   md5: string;
   url: string;
