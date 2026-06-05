@@ -19,12 +19,15 @@ export const getPostMediaType = (post: Post) => {
     case 'jpg':
     case 'png':
     case 'gif':
+    case 'webp':
       return 'image';
     case 'webm':
     case 'mp4':
       return 'video';
     case 'swf':
       return 'flash';
+    default:
+      return 'unsupported';
   }
 }
 

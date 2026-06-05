@@ -15,7 +15,7 @@ export default function Cache() {
           case 'video':
             return (<img key={post.id} src={getPostVideoPreviewUrl(post)} alt="" />);
           default:
-            return null;
+            return null; // Dont bother caching anything
         }
       })}
     </div>
