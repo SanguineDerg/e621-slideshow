@@ -1,6 +1,6 @@
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import type { RootState, AppDispatch } from './store';
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
 // Use throughout your app instead of plain `useDispatch` and `useSelector`
 export const useAppDispatch = () => useDispatch<AppDispatch>();
@@ -13,17 +13,25 @@ export const useAnimationFrame = (callback: (deltaTime: number) => void) => {
   const requestRef = useRef<number>();
   const previousTimeRef = useRef<number>();
   
-  const animate = (time: number) => {
+  const animate = useCallback((time: number) => {
     if (previousTimeRef.current !== undefined) {
       const deltaTime = time - previousTimeRef.current;
       callback(deltaTime);
     }
     previousTimeRef.current = time;
     requestRef.current = requestAnimationFrame(animate);
-  }
+  }, [callback]);
+
+  const started = useRef(false);
   
   useEffect(() => {
+    // Make sure the effect runs only once
+    if (started.current) {
+      return;
+    }
+    started.current = true;
+
     requestRef.current = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(requestRef.current as number);
-  }, []); // Make sure the effect runs only once
+  }, [animate]);
 }

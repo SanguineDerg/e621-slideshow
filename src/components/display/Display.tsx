@@ -2,7 +2,6 @@ import { useSelector } from 'react-redux';
 import { getPostImageUrl, getPostMediaType, getPostVideoPreviewUrl } from '../../api/e621/posts';
 import { selectCurrentSlideshowPost, selectFetchError, selectFetchErrorHint, selectFetchStatus } from '../../slices/postsSlice';
 import styles from './Display.module.css'
-import { selectVideoDisplayMode } from '../../slices/settingsSlice';
 
 export function Display() {
   const currentPost = useSelector(selectCurrentSlideshowPost);
@@ -11,7 +10,7 @@ export function Display() {
   const errorHint = useSelector(selectFetchErrorHint);
 
   const currentFiletype = currentPost !== null ? getPostMediaType(currentPost) : null;
-  const videoDisplayMode = useSelector(selectVideoDisplayMode);
+  // const videoDisplayMode = useSelector(selectVideoDisplayMode);
   // TODO: support embedded video
 
   return (
@@ -29,7 +28,14 @@ export function Display() {
       {currentFiletype === 'flash' && (
         <div className={styles.text}>
           <span>
-            Flash
+            Flash (unsupported)
+          </span>
+        </div>
+      )}
+      {currentFiletype === 'unsupported' && (
+        <div className={styles.text}>
+          <span>
+            Unsupported file extension, report this issue on github.
           </span>
         </div>
       )}
@@ -37,6 +43,14 @@ export function Display() {
         <div className={styles.text}>
           <span>
             Loading
+          </span>
+        </div>
+      )}
+      {/* This condition only applies when a search has no results */}
+      {currentFiletype === null && status === 'finished' && (
+        <div className={styles.text}>
+          <span>
+            No results
           </span>
         </div>
       )}
